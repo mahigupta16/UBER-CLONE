@@ -1,175 +1,186 @@
-# User Registration & Login Endpoints
+# Captain Registration & Login Endpoints
 
-## POST /users/register
+## POST /captains/register
 
 ### Description
-This endpoint allows a new user to register by providing their email, first name, last name, and password. Upon successful registration, a JSON Web Token (JWT) is generated and returned for authentication.
+Registers a new captain by providing personal and vehicle details. Returns a JWT token and captain information upon success.
 
 ### Request Body
-The request body must be in JSON format and include the following fields:
-
-- `email` (string, required): The email address of the user. Must be a valid email format.
-- `fullname` (object, required): An object containing the user's name.
-  - `firstname` (string, required): The first name of the user. Must be at least 3 characters long.
-  - `lastname` (string, required): The last name of the user. Must be at least 3 characters long.
-- `password` (string, required): The password for the user account. Must be at least 6 characters long.
+JSON object with the following fields:
+- `email` (string, required): Captain's email address.
+- `fullname` (object, required):
+  - `firstname` (string, required): First name (min 3 characters).
+  - `lastname` (string, required): Last name (min 3 characters).
+- `password` (string, required): Password (min 6 characters).
+- `vehicle` (object, required):
+  - `color` (string, required): Vehicle color (min 3 characters).
+  - `plate` (string, required): Vehicle plate (min 3 characters).
+  - `capacity` (integer, required): Vehicle capacity (min 1).
+  - `vehicleType` (string, required): One of `car`, `motorcycle`, `auto`.
 
 #### Example Request
 ```json
 {
-  "email": "user@example.com",
+  "email": "captain@example.com",
   "fullname": {
-    "firstname": "John",
-    "lastname": "Doe"
+    "firstname": "Jane",
+    "lastname": "Smith"
   },
-  "password": "securepassword"
+  "password": "securepassword",
+  "vehicle": {
+    "color": "Red",
+    "plate": "ABC123",
+    "capacity": 4,
+    "vehicleType": "car"
+  }
 }
 ```
 
 ### Responses
-- **201 Created**: User successfully registered. Returns the generated token and user information.
+- **201 Created**: Captain registered successfully.
   ```json
   {
     "token": "jwt_token_here",
-    "user": {
+    "captain": {
       "fullname": {
-        "firstname": "John",
-        "lastname": "Doe"
+        "firstname": "Jane",
+        "lastname": "Smith"
       },
-      "email": "user@example.com"
+      "email": "captain@example.com",
+      "vehicle": {
+        "color": "Red",
+        "plate": "ABC123",
+        "capacity": 4,
+        "vehicleType": "car"
+      }
     }
   }
   ```
-- **400 Bad Request**: If the request body is invalid or if the user already exists.
+- **400 Bad Request**: Validation errors or captain already exists.
   ```json
   {
     "errors": [
       {
-        "msg": "Invalid Email",
+        "msg": "Please enter a valid email address",
         "param": "email"
       }
     ]
   }
   ```
-
-### Status Codes
-- `201`: User created successfully.
-- `400`: Bad request due to validation errors or existing user.
 
 ---
 
-## POST /users/login
+## POST /captains/login
 
 ### Description
-This endpoint allows an existing user to log in using their email and password. If the credentials are valid, a JWT token and user information are returned.
+Authenticates a captain using email and password. Returns a JWT token and captain information if successful.
 
 ### Request Body
-The request body must be in JSON format and include the following fields:
-
-- `email` (string, required): The user's email address. Must be a valid email format.
-- `password` (string, required): The user's password. Must be at least 6 characters long.
+- `email` (string, required): Captain's email.
+- `password` (string, required): Captain's password.
 
 #### Example Request
 ```json
 {
-  "email": "user@example.com",
+  "email": "captain@example.com",
   "password": "securepassword"
 }
 ```
 
 ### Responses
-- **200 OK**: Login successful. Returns the generated token and user information.
+- **200 OK**: Login successful.
   ```json
   {
     "token": "jwt_token_here",
-    "user": {
+    "captain": {
       "fullname": {
-        "firstname": "John",
-        "lastname": "Doe"
+        "firstname": "Jane",
+        "lastname": "Smith"
       },
-      "email": "user@example.com"
+      "email": "captain@example.com",
+      "vehicle": {
+        "color": "Red",
+        "plate": "ABC123",
+        "capacity": 4,
+        "vehicleType": "car"
+      }
     }
   }
   ```
-- **400 Bad Request**: If the request body is invalid.
+- **400 Bad Request**: Validation errors.
   ```json
   {
     "errors": [
       {
-        "msg": "Invalid Email",
-        "param": "email"
+        "msg": "Password must be at least 6 characters long",
+        "param": "password"
       }
     ]
   }
   ```
-- **401 Unauthorized**: If the email or password is incorrect.
+- **401 Unauthorized**: Invalid email or password.
   ```json
   {
     "message": "Invalid email or password"
   }
   ```
 
-### Status Codes
-- `200`: Login successful.
-- `400`: Bad request due to validation errors.
-- `401`: Unauthorized, invalid credentials.
-
 ---
 
-## GET /users/profile
+## GET /captains/profile
 
 ### Description
-This endpoint returns the authenticated user's profile information. The request must include a valid JWT token (sent via cookie or Authorization header).
+Returns the authenticated captain's profile information.
 
 ### Authentication
-- Requires authentication (JWT token in cookie or `Authorization: Bearer <token>` header).
+- Requires JWT token (cookie or `Authorization: Bearer <token>` header).
 
 ### Responses
-- **200 OK**: Returns the user's profile information.
+- **200 OK**: Returns captain profile.
   ```json
   {
-    "fullname": {
-      "firstname": "John",
-      "lastname": "Doe"
-    },
-    "email": "user@example.com"
+    "captain": {
+      "fullname": {
+        "firstname": "Jane",
+        "lastname": "Smith"
+      },
+      "email": "captain@example.com",
+      "vehicle": {
+        "color": "Red",
+        "plate": "ABC123",
+        "capacity": 4,
+        "vehicleType": "car"
+      }
+    }
   }
   ```
-- **401 Unauthorized**: If the token is missing or invalid.
+- **401 Unauthorized**: Missing or invalid token.
   ```json
   {
     "message": "Unauthorized"
   }
   ```
 
-### Status Codes
-- `200`: Profile fetched successfully.
-- `401`: Unauthorized, invalid or missing token.
-
 ---
 
-## GET /users/logout
+## GET /captains/logout
 
 ### Description
-This endpoint logs out the authenticated user by clearing the authentication token cookie and blacklisting the token.
+Logs out the authenticated captain by clearing the authentication token and blacklisting it.
 
 ### Authentication
-- Requires authentication (JWT token in cookie or `Authorization: Bearer <token>` header).
+- Requires JWT token (cookie or `Authorization: Bearer <token>` header).
 
 ### Responses
 - **200 OK**: Logout successful.
   ```json
   {
-    "message": "Logged out successfully"
+    "message": "Logout successfully"
   }
   ```
-- **401 Unauthorized**: If the token is missing or invalid.
+- **401 Unauthorized**: Missing or invalid token.
   ```json
   {
     "message": "Unauthorized"
   }
   ```
-
-### Status Codes
-- `200`: Logout successful.
-- `401`: Unauthorized, invalid or missing token.
