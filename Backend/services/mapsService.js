@@ -1,0 +1,102 @@
+const axios = require('axios');
+const captainModel = require('../models/captain.model');
+
+const ORS_API_KEY = process.env.ORS_API_KEY;
+
+// Get coordinates from address
+module.exports.getAddressCoordinate = async (address) => {
+    const url = `https://api.openrouteservice.org/geocode/search?api_key=${ORS_API_KEY}&text=${encodeURIComponent(address)}`;
+
+    try {
+        const response = await axios.get(url);
+        const features = response.data.features;
+
+        if (features.length > 0) {
+            const [lng, lat] = features[0].geometry.coordinates;
+            return {
+                ltd: lat,
+                lng: lng
+            };
+        } else {
+            throw new Error('Unable to fetch coordinates');
+        }
+    } catch (error) {
+        console.error(error);
+        throw error;
+    }
+};
+
+// Get distance and time from origin to destination
+module.exports.getDistanceTime = async (origin, destination) => {
+    if (!origin || !destination) {
+        throw new Error('Origin and destination are required');
+    }
+
+    try {
+        // Get coordinates of origin and destination
+        const originCoords = await module.exports.getAddressCoordinate(origin);
+        const destinationCoords = await module.exports.getAddressCoordinate(destination);
+
+        const url = 'https://api.openrouteservice.org/v2/matrix/driving-car';
+
+        const body = {
+            locations: [
+                [originCoords.lng, originCoords.ltd],
+                [destinationCoords.lng, destinationCoords.ltd]
+            ],
+            metrics: ['distance', 'duration']
+        };
+
+        const headers = {
+            Authorization: ORS_API_KEY,
+            'Content-Type': 'application/json'
+        };
+
+        const response = await axios.post(url, body, { headers });
+
+        if (!response.data || !response.data.distances) {
+            throw new Error('No routes found');
+        }
+
+        return {
+            distance: response.data.distances[0][1], // in meters
+            duration: response.data.durations[0][1]  // in seconds
+        };
+
+    } catch (error) {
+        console.error(error);
+        throw error;
+    }
+};
+
+// Get address autocomplete suggestions
+module.exports.getAutoCompleteSuggestions = async (input) => {
+    if (!input) {
+        throw new Error('query is required');
+    }
+
+    const url = `https://api.openrouteservice.org/geocode/autocomplete?api_key=${ORS_API_KEY}&text=${encodeURIComponent(input)}`;
+
+    try {
+        const response = await axios.get(url);
+        if (response.data && response.data.features.length > 0) {
+            return response.data.features.map(f => f.properties.label).filter(Boolean);
+        } else {
+            throw new Error('Unable to fetch suggestions');
+        }
+    } catch (error) {
+        console.error(error);
+        throw error;
+    }
+};
+
+// Get captains in radius
+module.exports.getCaptainsInTheRadius = async (ltd, lng, radius) => {
+    return captainModel.find({
+        location: {
+            $geoWithin: {
+                $centerSphere: [[ltd, lng], radius / 6371]
+            }
+        }
+    });
+};
