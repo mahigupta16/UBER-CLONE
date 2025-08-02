@@ -292,13 +292,13 @@ const Home = () => {
                     zoomControl={true}
                 />
             </div>
-            <div className=' flex flex-col justify-end h-screen absolute top-0 w-full'>
-                <div className={`p-4 bg-white relative transition-all duration-300 ${panelOpen ? 'h-full' : 'h-[32%]'} shadow-md rounded-t-lg`}> 
+            <div className=' flex flex-col justify-end h-full absolute top-0 w-full'>
+                <div className={`p-4 bg-white relative transition-all duration-300 ${panelOpen ? 'h-full' : 'h-[32%]'}  `}> 
                 <h5 ref={panelCloseRef} onClick={() => {
-                        setPanelOpen(false)
-                    }} className={`absolute right-6 top-6 text-2xl transition-all duration-300 ${panelOpen ? 'opacity-100' : 'opacity-0'}`}>
-                        <i className="ri-arrow-down-wide-line"></i>
-                    </h5>
+                    setPanelOpen(false)
+                }} className={`absolute right-6 top-6 text-2xl transition-all duration-300 ${panelOpen ? 'opacity-100' : 'opacity-0'}`}>
+                    <i className="ri-arrow-down-wide-line"></i>
+                </h5>
                     <h4 className='text-xl font-semibold mb-3 text-slate-800'>Find a trip</h4>
                     <form className='relative py-1' onSubmit={(e) => {
                         submitHandler(e)
@@ -347,8 +347,8 @@ const Home = () => {
                 <VehiclePanel
                     selectVehicle={setVehicleType}
                     fare={fare} 
-                    setConfirmRidePanel={openConfirmRidePanel} 
-                    setVehiclePanel={openVehiclePanel} />
+                    setConfirmRidePanel={setConfirmRidePanel} 
+                    setVehiclePanel={setVehiclePanel} />
             </div>
             <div ref={confirmRidePanelRef} className='fixed w-full z-10 bottom-0 translate-y-full bg-white px-4 py-6 pt-10 shadow-xl rounded-t-2xl'>
                 <ConfirmRide
@@ -357,8 +357,8 @@ const Home = () => {
                     destination={destination}
                     fare={fare}
                     vehicleType={vehicleType}
-                    setConfirmRidePanel={openConfirmRidePanel} 
-                    setVehicleFound={openVehicleFound} />
+                    setConfirmRidePanel={setConfirmRidePanel} 
+                    setVehicleFound={setVehicleFound} />
             </div>
             <div ref={vehicleFoundRef} className='fixed w-full z-10 bottom-0 translate-y-full bg-white px-4 py-6 pt-10 shadow-xl rounded-t-2xl'>
                 <LookingForDriver
@@ -367,13 +367,13 @@ const Home = () => {
                     destination={destination}
                     fare={fare}
                     vehicleType={vehicleType}
-                    setVehicleFound={openVehicleFound} />
+                    setVehicleFound={setVehicleFound} />
             </div>
             <div ref={waitingForDriverRef} className='fixed w-full  z-10 bottom-0  bg-white px-4 py-6 pt-10 shadow-xl rounded-t-2xl'>
                 <WaitingForDriver
                     ride={ride}
-                    setVehicleFound={openVehicleFound}
-                    setWaitingForDriver={openWaitingForDriver}
+                    setVehicleFound={setVehicleFound}
+                    setWaitingForDriver={setWaitingForDriver}
                     waitingForDriver={waitingForDriver}
                     showOtpInput={showOtpInput} />
             </div>

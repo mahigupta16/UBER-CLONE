@@ -31,14 +31,18 @@ module.exports.createRide = async (req, res) => {
 
         const captainsInRadius = await mapService.getCaptainsInTheRadius(pickupCoordinates.ltd, pickupCoordinates.lng, 50); // 50km radius for testing
 
-        console.log('Captains found in radius:', captainsInRadius.length);
-        console.log('Captains:', captainsInRadius.map(c => ({ id: c._id, socketId: c.socketId, status: c.status })));
+        // Filter captains by vehicle type
+        const matchingCaptains = captainsInRadius.filter(captain => 
+            captain.vehicle && captain.vehicle.vehicleType === vehicleType
+        );
+
+        console.log('Matching captains for vehicle type:', vehicleType, matchingCaptains.length);
 
         ride.otp = ""
 
         const rideWithUser = await rideModel.findOne({ _id: ride._id }).populate('user');
 
-        captainsInRadius.forEach(captain => {
+        matchingCaptains.forEach(captain => {
             console.log('Sending ride to captain:', captain._id, 'Socket ID:', captain.socketId);
             if (captain.socketId) {
                 sendMessageToSocketId(captain.socketId, {

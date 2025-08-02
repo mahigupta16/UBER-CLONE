@@ -2,10 +2,13 @@ import React, { useState } from 'react'
 import { Link } from 'react-router-dom'
 import axios from 'axios'
 import { useNavigate } from 'react-router-dom'
+import { useContext } from 'react'
+import { SocketContext } from '../context/SocketContext'
 
 const ConfirmRidePopUp = (props) => {
     const [ otp, setOtp ] = useState('')
     const navigate = useNavigate()
+    const { socket } = useContext(SocketContext)
 
     // Function to format distance
     const formatDistance = (distanceInMeters) => {
@@ -78,10 +81,15 @@ const ConfirmRidePopUp = (props) => {
                         <input value={otp} onChange={(e) => setOtp(e.target.value)} type="text" className='bg-[#eee] px-6 py-4 font-mono text-lg rounded-lg w-full mt-3' placeholder='Enter OTP' />
 
                         <button className='w-full mt-5 text-lg flex justify-center bg-green-600 text-white font-semibold p-3 rounded-lg'>Confirm</button>
-                        <button onClick={() => {
+                        <button onClick={(e) => {
+                            e.preventDefault();
+                            // Emit cancel-ride event to backend
+                            if (props.ride && props.ride._id && props.ride.captain && props.ride.captain._id) {
+                                socket.emit('cancel-ride', { rideId: props.ride._id, captainId: props.ride.captain._id })
+                            }
                             props.setConfirmRidePopupPanel(false)
                             props.setRidePopupPanel(false)
-
+                            navigate('/captain-home')
                         }} className='w-full mt-2 bg-red-600 text-lg text-white font-semibold p-3 rounded-lg'>Cancel</button>
 
                     </form>

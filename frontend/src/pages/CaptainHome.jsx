@@ -77,6 +77,20 @@ const CaptainHome = () => {
         };
     }, [socket]);
 
+    useEffect(() => {
+        const handleRideCancelled = (data) => {
+            alert('The ride was cancelled.');
+            setRidePopupPanel(false);
+            setConfirmRidePopupPanel(false);
+            setRide(null);
+            window.location.href = '/captain-home';
+        };
+        socket.on('ride-cancelled', handleRideCancelled);
+        return () => {
+            socket.off('ride-cancelled', handleRideCancelled);
+        };
+    }, [socket]);
+
     async function confirmRide() {
 
         const response = await axios.post(`${import.meta.env.VITE_BASE_URL}/rides/confirm`, {

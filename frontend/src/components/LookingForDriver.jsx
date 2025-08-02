@@ -1,4 +1,4 @@
-import React, { useContext } from 'react'
+import React, { useContext, useEffect } from 'react'
 import { SocketContext } from '../context/SocketContext'
 import { useNavigate } from 'react-router-dom'
 
@@ -6,14 +6,28 @@ const LookingForDriver = (props) => {
     const { socket } = useContext(SocketContext)
     const navigate = useNavigate()
 
+    // Listen for cancel events from backend (either user or captain cancels)
+    useEffect(() => {
+        const handleCancel = (data) => {
+            // Only close if this ride is affected
+            if (data.rideId === props.ride?._id) {
+                if (props.setVehicleFound) props.setVehicleFound(false)
+                navigate('/home')
+            }
+        }
+        socket.on('ride-cancelled', handleCancel)
+        return () => {
+            socket.off('ride-cancelled', handleCancel)
+        }
+    }, [socket, props.ride, props.setVehicleFound, navigate])
+
     const handleCancelRide = () => {
-        // Emit a socket event to cancel the ride if possible
+        // Emit a socket event to cancel the ride (user initiated)
         if (props.ride && props.ride._id && props.ride.user && props.ride.user._id) {
             socket.emit('cancel-ride', { rideId: props.ride._id, userId: props.ride.user._id })
         }
         // Always close the panel and reset UI
         if (props.setVehicleFound) props.setVehicleFound(false)
-        // Optionally reset other panels if needed
         navigate('/home')
     }
 
