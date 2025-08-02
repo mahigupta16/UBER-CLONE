@@ -20,7 +20,7 @@ const UpdateMapCenter = ({ position }) => {
     return null;
 };
 
-const LiveTracking = ({ className = "h-screen w-full", pickupCoords = null, destinationCoords = null, isCaptain = false }) => {
+const LiveTracking = ({ className = "h-screen w-full", pickupCoords = null, destinationCoords = null, isCaptain = false, scrollWheelZoom = true, zoomControl = true }) => {
     const [currentPosition, setCurrentPosition] = useState({ lat: 22.5726, lng: 88.3639 }); // Default: Kolkata
 
     // Debug coordinates
@@ -60,7 +60,7 @@ const LiveTracking = ({ className = "h-screen w-full", pickupCoords = null, dest
 
     return (
         <div className={className}>
-            <MapContainer center={centerPosition} zoom={15} style={{ height: '100%', width: '100%', zIndex: 0 }}>
+            <MapContainer center={centerPosition} zoom={15} style={{ height: '100%', width: '100%', zIndex: 0 }} scrollWheelZoom={scrollWheelZoom} zoomControl={zoomControl}>
                 <TileLayer
                     url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
                     attribution='&copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors'
@@ -71,7 +71,7 @@ const LiveTracking = ({ className = "h-screen w-full", pickupCoords = null, dest
                     position={currentPosition}
                     icon={L.divIcon({
                         className: 'custom-div-icon',
-                        html: `<div style="background-color: ${isCaptain ? '#3B82F6' : '#10B981'}; width: 20px; height: 20px; border-radius: 50%; border: 3px solid white; display: flex; align-items: center; justify-content: center; color: white; font-weight: bold; font-size: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.3);">${isCaptain ? 'C' : 'U'}</div>`,
+                        html: `<div style="background-color: ${isCaptain ? '#3B82F6' : '#84CC16'}; width: 20px; height: 20px; border-radius: 50%; border: 3px solid white; display: flex; align-items: center; justify-content: center; color: white; font-weight: bold; font-size: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.3);">${isCaptain ? 'C' : 'U'}</div>`,
                         iconSize: [20, 20],
                         iconAnchor: [10, 10]
                     })}
@@ -83,7 +83,7 @@ const LiveTracking = ({ className = "h-screen w-full", pickupCoords = null, dest
                         position={pickupCoords}
                         icon={L.divIcon({
                             className: 'custom-div-icon',
-                            html: '<div style="background-color: #4CAF50; width: 30px; height: 30px; border-radius: 50%; border: 3px solid white; display: flex; align-items: center; justify-content: center; color: white; font-weight: bold; font-size: 16px; box-shadow: 0 2px 8px rgba(0,0,0,0.3);">P</div>',
+                            html: '<div style="background-color: #3B82F6; width: 30px; height: 30px; border-radius: 50%; border: 3px solid white; display: flex; align-items: center; justify-content: center; color: white; font-weight: bold; font-size: 16px; box-shadow: 0 2px 8px rgba(0,0,0,0.3);">P</div>',
                             iconSize: [30, 30],
                             iconAnchor: [15, 15]
                         })}
@@ -96,7 +96,7 @@ const LiveTracking = ({ className = "h-screen w-full", pickupCoords = null, dest
                         position={destinationCoords}
                         icon={L.divIcon({
                             className: 'custom-div-icon',
-                            html: '<div style="background-color: #F44336; width: 30px; height: 30px; border-radius: 50%; border: 3px solid white; display: flex; align-items: center; justify-content: center; color: white; font-weight: bold; font-size: 16px; box-shadow: 0 2px 8px rgba(0,0,0,0.3);">D</div>',
+                            html: '<div style="background-color: #84CC16; width: 30px; height: 30px; border-radius: 50%; border: 3px solid white; display: flex; align-items: center; justify-content: center; color: white; font-weight: bold; font-size: 16px; box-shadow: 0 2px 8px rgba(0,0,0,0.3);">D</div>',
                             iconSize: [30, 30],
                             iconAnchor: [15, 15]
                         })}
@@ -107,7 +107,7 @@ const LiveTracking = ({ className = "h-screen w-full", pickupCoords = null, dest
                 {pickupCoords && destinationCoords && (
                     <Polyline
                         positions={[pickupCoords, destinationCoords]}
-                        color="#8B5CF6"
+                        color="#3B82F6"
                         weight={4}
                         opacity={0.8}
                     />

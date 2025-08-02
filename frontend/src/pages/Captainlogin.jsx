@@ -36,29 +36,29 @@ const Captainlogin = () => {
     setPassword('')
   }
   return (
-    <div className='p-7 h-screen flex flex-col justify-between'>
+    <div className='p-8 h-screen flex flex-col justify-between bg-slate-50'>
       <div>
-        <img className='w-20 mb-3' src="https://www.svgrepo.com/show/505031/uber-driver.svg" alt="" />
+        <img className='w-24 mb-6' src="https://www.svgrepo.com/show/505031/uber-driver.svg" alt="Captain Icon" />
 
         <form onSubmit={(e) => {
           submitHandler(e)
         }}>
-          <h3 className='text-lg font-medium mb-2'>What's your email</h3>
+          <h3 className='text-xl font-bold mb-3 text-slate-800'>What's your email</h3>
           <input
             required
             value={email}
             onChange={(e) => {
               setEmail(e.target.value)
             }}
-            className='bg-[#eeeeee] mb-7 rounded-lg px-4 py-2 border w-full text-lg placeholder:text-base'
+            className='bg-white border border-slate-200 mb-6 rounded-xl px-5 py-4 w-full text-lg placeholder:text-slate-500 focus:border-blue-500 focus:outline-none transition-all duration-200'
             type="email"
             placeholder='email@example.com'
           />
 
-          <h3 className='text-lg font-medium mb-2'>Enter Password</h3>
+          <h3 className='text-xl font-bold mb-3 text-slate-800'>Enter Password</h3>
 
           <input
-            className='bg-[#eeeeee] mb-7 rounded-lg px-4 py-2 border w-full text-lg placeholder:text-base'
+            className='bg-white border border-slate-200 mb-8 rounded-xl px-5 py-4 w-full text-lg placeholder:text-slate-500 focus:border-blue-500 focus:outline-none transition-all duration-200'
             value={password}
             onChange={(e) => {
               setPassword(e.target.value)
@@ -68,16 +68,16 @@ const Captainlogin = () => {
           />
 
           <button
-            className='bg-[#111] text-white font-semibold mb-3 rounded-lg px-4 py-2 w-full text-lg placeholder:text-base'
+            className='bg-blue-500 hover:bg-blue-600 text-white font-bold mb-6 rounded-xl px-5 py-4 w-full text-lg transition-all duration-200 shadow-lg hover:shadow-xl transform hover:scale-[1.02]'
           >Login</button>
 
         </form>
-        <p className='text-center'>Join a fleet? <Link to='/captain-signup' className='text-blue-600'>Register as a Captain</Link></p>
+        <p className='text-center text-slate-600'>Join a fleet? <Link to='/captain-signup' className='text-blue-500 font-semibold hover:text-blue-600 transition-colors duration-200'>Register as a Captain</Link></p>
       </div>
       <div>
         <Link
           to='/login'
-          className='bg-[#d5622d] flex items-center justify-center text-white font-semibold mb-5 rounded-lg px-4 py-2 w-full text-lg placeholder:text-base'
+          className='bg-slate-800 hover:bg-slate-900 flex items-center justify-center text-white font-bold mb-6 rounded-xl px-5 py-4 w-full text-lg transition-all duration-200 shadow-lg hover:shadow-xl transform hover:scale-[1.02]'
         >Sign in as User</Link>
       </div>
     </div>

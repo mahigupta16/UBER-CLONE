@@ -29,6 +29,7 @@ const Home = () => {
     const [ confirmRidePanel, setConfirmRidePanel ] = useState(false)
     const [ vehicleFound, setVehicleFound ] = useState(false)
     const [ waitingForDriver, setWaitingForDriver ] = useState(false)
+    const [ showOtpInput, setShowOtpInput ] = useState(false)
     const [ pickupSuggestions, setPickupSuggestions ] = useState([])
     const [ destinationSuggestions, setDestinationSuggestions ] = useState([])
     const [ activeField, setActiveField ] = useState(null)
@@ -41,6 +42,43 @@ const Home = () => {
     const { socket } = useContext(SocketContext)
     const { user } = useContext(UserDataContext)
 
+    // Panel management function
+    const closeAllPanels = () => {
+        setVehiclePanel(false)
+        setConfirmRidePanel(false)
+        setVehicleFound(false)
+        setWaitingForDriver(false)
+        setShowOtpInput(false)
+        setPanelOpen(false)
+    }
+
+    // Enhanced panel setters
+    const openVehiclePanel = () => {
+        closeAllPanels()
+        setVehiclePanel(true)
+    }
+
+    const openConfirmRidePanel = () => {
+        closeAllPanels()
+        setConfirmRidePanel(true)
+    }
+
+    const openVehicleFound = () => {
+        closeAllPanels()
+        setVehicleFound(true)
+    }
+
+    const openWaitingForDriver = () => {
+        closeAllPanels()
+        setWaitingForDriver(true)
+        setShowOtpInput(false)
+        
+        // Show OTP input after 7 seconds
+        setTimeout(() => {
+            setShowOtpInput(true)
+        }, 7000)
+    }
+
     useEffect(() => {
         socket.emit("join", { userType: "user", userId: user._id })
     }, [ user ])
@@ -51,22 +89,31 @@ const Home = () => {
             console.log('Ride captain data:', ride.captain);
             console.log('Ride OTP:', ride.otp);
             setVehicleFound(false)
-            setWaitingForDriver(true)
+            openWaitingForDriver()
             setRide(ride)
         }
 
         const handleRideStarted = (ride) => {
             console.log('Ride started received:', ride);
-            setWaitingForDriver(false)
+            closeAllPanels()
             navigate('/riding', { state: { ride } })
         }
 
+        const handleRideCancelledByCaptain = (data) => {
+            console.log('Ride cancelled by captain:', data);
+            alert(`Your ride was cancelled by the captain: ${data.reason || 'Unknown reason'}`);
+            closeAllPanels();
+            navigate('/home');
+        };
+
         socket.on('ride-confirmed', handleRideConfirmed)
         socket.on('ride-started', handleRideStarted)
+        socket.on('ride-cancelled-by-captain', handleRideCancelledByCaptain);
 
         return () => {
             socket.off('ride-confirmed', handleRideConfirmed)
             socket.off('ride-started', handleRideStarted)
+            socket.off('ride-cancelled-by-captain', handleRideCancelledByCaptain);
         }
     }, [socket, navigate])
 
@@ -191,20 +238,27 @@ const Home = () => {
 
 
     async function findTrip() {
-        setVehiclePanel(true)
+        // If pickup is empty, use geolocation
+        if (!pickup) {
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition((position) => {
+                    const coords = position.coords;
+                    setPickup(`Current Location (${coords.latitude}, ${coords.longitude})`);
+                    // Optionally, you could reverse geocode here for a better label
+                });
+            }
+        }
+        openVehiclePanel()
         setPanelOpen(false)
 
         const response = await axios.get(`${import.meta.env.VITE_BASE_URL}/rides/get-fare`, {
-            params: { pickup, destination },
+            params: { pickup: pickup || 'Current Location', destination },
             headers: {
                 Authorization: `Bearer ${localStorage.getItem('token')}`
             }
         })
 
-
         setFare(response.data)
-
-
     }
 
     async function createRide() {
@@ -224,31 +278,32 @@ const Home = () => {
     return (
         <div className='h-screen relative overflow-hidden'>
              {/* Header */}
-            <div className={`fixed p-4 top-0 flex items-center justify-between w-full z-20 bg-white shadow-sm transition-all duration-300 ${panelOpen ? 'opacity-0 pointer-events-none' : 'opacity-100'}`}>
-                <img className='w-16 h-8 ml-2' src="https://upload.wikimedia.org/wikipedia/commons/c/cc/Uber_logo_2018.png" alt="" />
-                <Link to='/start' className='h-10 w-10 bg-gray-100 flex items-center justify-center rounded-full'>
-                    <i className="text-lg font-medium ri-logout-box-r-line"></i>
+            <div className={`fixed top-0 left-0 flex items-center justify-between w-full z-20 bg-transparent h-16 px-4 pointer-events-none transition-all duration-300 ${panelOpen ? 'opacity-0 pointer-events-none' : 'opacity-100'}`}> 
+                <img className='w-12 h-12 object-contain ml-2 pointer-events-auto' src="https://upload.wikimedia.org/wikipedia/commons/c/cc/Uber_logo_2018.png" alt="Uber Logo" />
+                <Link to='/start' className='h-10 w-10 bg-slate-100 hover:bg-slate-200 flex items-center justify-center rounded-full transition-all duration-200 shadow-sm hover:shadow-md pointer-events-auto'>
+                    <i className="text-lg font-medium ri-logout-box-r-line text-slate-700"></i>
                 </Link>
             </div>
             <div className='h-screen w-screen'>
                 <LiveTracking 
                     pickupCoords={ride?.pickupCoords ? { lat: ride.pickupCoords.ltd, lng: ride.pickupCoords.lng } : null}
                     destinationCoords={ride?.destinationCoords ? { lat: ride.destinationCoords.ltd, lng: ride.destinationCoords.lng } : null}
+                    scrollWheelZoom={true}
+                    zoomControl={true}
                 />
-
             </div>
             <div className=' flex flex-col justify-end h-screen absolute top-0 w-full'>
-                <div className={`p-6 bg-white relative transition-all duration-300 ${panelOpen ? 'h-full' : 'h-[35%]'}`}>
-                    <h5 ref={panelCloseRef} onClick={() => {
+                <div className={`p-4 bg-white relative transition-all duration-300 ${panelOpen ? 'h-full' : 'h-[32%]'} shadow-md rounded-t-lg`}> 
+                <h5 ref={panelCloseRef} onClick={() => {
                         setPanelOpen(false)
                     }} className={`absolute right-6 top-6 text-2xl transition-all duration-300 ${panelOpen ? 'opacity-100' : 'opacity-0'}`}>
                         <i className="ri-arrow-down-wide-line"></i>
                     </h5>
-                    <h4 className='text-2xl font-semibold mb-4'>Find a trip</h4>
-                    <form className='relative py-2' onSubmit={(e) => {
+                    <h4 className='text-xl font-semibold mb-3 text-slate-800'>Find a trip</h4>
+                    <form className='relative py-1' onSubmit={(e) => {
                         submitHandler(e)
                     }}>
-                        <div className="line absolute h-16 w-1 top-[50%] -translate-y-1/2 left-5 bg-gray-700 rounded-full"></div>
+                        <div className="line absolute h-12 w-1 top-[50%] -translate-y-1/2 left-4 bg-blue-500 rounded-full"></div>
                         <input
                             onClick={() => {
                                 setPanelOpen(true)
@@ -256,7 +311,7 @@ const Home = () => {
                             }}
                             value={pickup}
                             onChange={handlePickupChange}
-                            className='bg-[#eee] px-12 py-2 text-lg rounded-lg w-full'
+                            className='bg-slate-100 px-10 py-2 text-base rounded w-full border border-slate-200 focus:border-blue-500 transition-all duration-200 placeholder:text-slate-500'
                             type="text"
                             placeholder='Add a pick-up location'
                         />
@@ -267,17 +322,17 @@ const Home = () => {
                             }}
                             value={destination}
                             onChange={handleDestinationChange}
-                            className='bg-[#eee] px-12 py-2 text-lg rounded-lg w-full  mt-3'
+                            className='bg-slate-100 px-10 py-2 text-base rounded w-full mt-2 border border-slate-200 focus:border-blue-500 transition-all duration-200 placeholder:text-slate-500' 
                             type="text"
                             placeholder='Enter your destination' />
                     </form>
                     <button
                         onClick={findTrip}
-                        className='bg-black text-white px-4 py-3 rounded-lg mt-6 w-full font-semibold text-lg'>
+                        className='bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded mt-4 w-full font-semibold text-base transition-all duration-200 shadow hover:shadow-md'>
                         Find Trip
                     </button>
                 </div>
-                <div ref={panelRef} className='bg-white h-0'>
+                <div ref={panelRef} className='bg-white h-0 shadow-md'>
                     <LocationSearchPanel
                         suggestions={activeField === 'pickup' ? pickupSuggestions : destinationSuggestions}
                         setPanelOpen={setPanelOpen}
@@ -288,36 +343,39 @@ const Home = () => {
                     />
                 </div>
             </div>
-            <div ref={vehiclePanelRef} className='fixed w-full z-10 bottom-0 translate-y-full bg-white px-3 py-10 pt-12'>
+            <div ref={vehiclePanelRef} className='fixed w-full z-10 bottom-0 translate-y-full bg-white px-4 py-8 pt-10 shadow-xl rounded-t-2xl'>
                 <VehiclePanel
                     selectVehicle={setVehicleType}
-                    fare={fare} setConfirmRidePanel={setConfirmRidePanel} setVehiclePanel={setVehiclePanel} />
+                    fare={fare} 
+                    setConfirmRidePanel={openConfirmRidePanel} 
+                    setVehiclePanel={openVehiclePanel} />
             </div>
-            <div ref={confirmRidePanelRef} className='fixed w-full z-10 bottom-0 translate-y-full bg-white px-3 py-6 pt-12'>
+            <div ref={confirmRidePanelRef} className='fixed w-full z-10 bottom-0 translate-y-full bg-white px-4 py-6 pt-10 shadow-xl rounded-t-2xl'>
                 <ConfirmRide
                     createRide={createRide}
                     pickup={pickup}
                     destination={destination}
                     fare={fare}
                     vehicleType={vehicleType}
-
-                    setConfirmRidePanel={setConfirmRidePanel} setVehicleFound={setVehicleFound} />
+                    setConfirmRidePanel={openConfirmRidePanel} 
+                    setVehicleFound={openVehicleFound} />
             </div>
-            <div ref={vehicleFoundRef} className='fixed w-full z-10 bottom-0 translate-y-full bg-white px-3 py-6 pt-12'>
+            <div ref={vehicleFoundRef} className='fixed w-full z-10 bottom-0 translate-y-full bg-white px-4 py-6 pt-10 shadow-xl rounded-t-2xl'>
                 <LookingForDriver
                     createRide={createRide}
                     pickup={pickup}
                     destination={destination}
                     fare={fare}
                     vehicleType={vehicleType}
-                    setVehicleFound={setVehicleFound} />
+                    setVehicleFound={openVehicleFound} />
             </div>
-            <div ref={waitingForDriverRef} className='fixed w-full  z-10 bottom-0  bg-white px-3 py-6 pt-12'>
+            <div ref={waitingForDriverRef} className='fixed w-full  z-10 bottom-0  bg-white px-4 py-6 pt-10 shadow-xl rounded-t-2xl'>
                 <WaitingForDriver
                     ride={ride}
-                    setVehicleFound={setVehicleFound}
-                    setWaitingForDriver={setWaitingForDriver}
-                    waitingForDriver={waitingForDriver} />
+                    setVehicleFound={openVehicleFound}
+                    setWaitingForDriver={openWaitingForDriver}
+                    waitingForDriver={waitingForDriver}
+                    showOtpInput={showOtpInput} />
             </div>
         </div>
     )

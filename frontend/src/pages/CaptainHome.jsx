@@ -116,10 +116,10 @@ const CaptainHome = () => {
     return (
         <div className='h-screen flex flex-col'>
             {/* Header */}
-            <div className='fixed p-4 top-0 flex items-center justify-between w-full z-20 bg-white shadow-sm'>
-                <img className='w-12 h-12' src="https://www.svgrepo.com/show/505031/uber-driver.svg" alt="" />
-                <Link to='/captain-login' className='h-10 w-10 bg-gray-100 flex items-center justify-center rounded-full'>
-                    <i className="text-lg font-medium ri-logout-box-r-line"></i>
+            <div className='fixed top-0 left-0 flex items-center justify-between w-full z-20 bg-transparent h-16 px-4 pointer-events-none'>
+                <img className='w-12 h-12 object-contain ml-2 pointer-events-auto' src="https://www.svgrepo.com/show/505031/uber-driver.svg" alt="Captain Icon" />
+                <Link to='/captain-login' className='h-10 w-10 bg-slate-100 hover:bg-slate-200 flex items-center justify-center rounded-full transition-all duration-200 shadow-sm hover:shadow-md pointer-events-auto'>
+                    <i className="text-lg font-medium ri-logout-box-r-line text-slate-700"></i>
                 </Link>
             </div>
             
@@ -135,12 +135,12 @@ const CaptainHome = () => {
             </div>
             
             {/* Captain Details Section */}
-            <div className='bg-white border-t border-gray-200 p-4 max-h-48 overflow-y-auto'>
+            <div className='bg-white border-t border-slate-200 p-4 max-h-48 overflow-y-auto shadow-md'>
                 <CaptainDetails />
             </div>
             
             {/* Ride Popup */}
-            <div ref={ridePopupPanelRef} className='fixed w-full z-50 bottom-0 translate-y-full bg-white px-3 py-10 pt-12 shadow-2xl border-t-2 border-gray-200 transition-transform duration-300 ease-in-out'>
+            <div ref={ridePopupPanelRef} className='fixed w-full z-50 bottom-0 translate-y-full bg-white px-3 py-10 pt-12 shadow-xl border-t-2 border-slate-200 transition-transform duration-300 ease-in-out rounded-t-2xl'>
                 <RidePopUp
                     ride={ride}
                     setRidePopupPanel={setRidePopupPanel}
@@ -150,7 +150,7 @@ const CaptainHome = () => {
             </div>
             
             {/* Confirm Ride Popup */}
-            <div ref={confirmRidePopupPanelRef} className='fixed w-full h-screen z-10 bottom-0 translate-y-full bg-white px-3 py-10 pt-12 transition-transform duration-300 ease-in-out'>
+            <div ref={confirmRidePopupPanelRef} className='fixed w-full h-screen z-10 bottom-0 translate-y-full bg-white px-3 py-10 pt-12 transition-transform duration-300 ease-in-out shadow-xl'>
                 <ConfirmRidePopUp
                     ride={ride}
                     setConfirmRidePopupPanel={setConfirmRidePopupPanel} setRidePopupPanel={setRidePopupPanel} />
