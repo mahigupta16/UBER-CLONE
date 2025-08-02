@@ -79,24 +79,50 @@ module.exports.getAutoCompleteSuggestions = async (input) => {
 
     try {
         const response = await axios.get(url);
-        if (response.data && response.data.features.length > 0) {
+        console.log('ORS API response:', response.data);
+        
+        if (response.data && response.data.features && response.data.features.length > 0) {
             return response.data.features.map(f => f.properties.label).filter(Boolean);
         } else {
-            throw new Error('Unable to fetch suggestions');
+            console.log('No suggestions found for:', input);
+            return [];
         }
     } catch (error) {
-        console.error(error);
-        throw error;
+        console.error('Error fetching suggestions:', error.response?.data || error.message);
+        return [];
     }
 };
 
 // Get captains in radius
 module.exports.getCaptainsInTheRadius = async (ltd, lng, radius) => {
-    return captainModel.find({
+    console.log('Searching for captains at coordinates:', { ltd, lng, radius });
+    
+    // First, let's see all captains
+    const allCaptains = await captainModel.find({});
+    console.log('All captains in database:', allCaptains.map(c => ({
+        id: c._id,
+        status: c.status,
+        socketId: c.socketId,
+        location: c.location
+    })));
+    
+    // Then search with geospatial query
+    const captainsInRadius = await captainModel.find({
         location: {
             $geoWithin: {
-                $centerSphere: [[ltd, lng], radius / 6371]
+                $centerSphere: [[lng, ltd], radius / 6371]
             }
-        }
+        },
+        status: 'active' // Only get active captains
     });
+    
+    console.log('Captains found in radius:', captainsInRadius.length);
+    console.log('Captains in radius details:', captainsInRadius.map(c => ({
+        id: c._id,
+        status: c.status,
+        socketId: c.socketId,
+        location: c.location
+    })));
+    
+    return captainsInRadius;
 };

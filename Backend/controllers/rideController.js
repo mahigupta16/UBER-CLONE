@@ -11,29 +11,43 @@ module.exports.createRide = async (req, res) => {
         return res.status(400).json({ errors: errors.array() });
     }
 
-    const { userId, pickup, destination, vehicleType } = req.body;
+    const { pickup, destination, vehicleType } = req.body;
 
     try {
-        const ride = await rideService.createRide({ user: req.user._id, pickup, destination, vehicleType });
+        const pickupCoordinates = await mapService.getAddressCoordinate(pickup);
+        const destinationCoordinates = await mapService.getAddressCoordinate(destination);
+
+        const ride = await rideService.createRide({ 
+            user: req.user._id, 
+            pickup, 
+            destination, 
+            vehicleType,
+            pickupCoords: pickupCoordinates,
+            destinationCoords: destinationCoordinates
+        });
         res.status(201).json(ride);
 
-        const pickupCoordinates = await mapService.getAddressCoordinate(pickup);
+        console.log('Pickup coordinates:', pickupCoordinates);
 
+        const captainsInRadius = await mapService.getCaptainsInTheRadius(pickupCoordinates.ltd, pickupCoordinates.lng, 50); // 50km radius for testing
 
-
-        const captainsInRadius = await mapService.getCaptainsInTheRadius(pickupCoordinates.ltd, pickupCoordinates.lng, 2);
+        console.log('Captains found in radius:', captainsInRadius.length);
+        console.log('Captains:', captainsInRadius.map(c => ({ id: c._id, socketId: c.socketId, status: c.status })));
 
         ride.otp = ""
 
         const rideWithUser = await rideModel.findOne({ _id: ride._id }).populate('user');
 
-        captainsInRadius.map(captain => {
-
-            sendMessageToSocketId(captain.socketId, {
-                event: 'new-ride',
-                data: rideWithUser
-            })
-
+        captainsInRadius.forEach(captain => {
+            console.log('Sending ride to captain:', captain._id, 'Socket ID:', captain.socketId);
+            if (captain.socketId) {
+                sendMessageToSocketId(captain.socketId, {
+                    event: 'new-ride',
+                    data: rideWithUser
+                })
+            } else {
+                console.error('Captain has no socketId:', captain._id);
+            }
         })
 
     } catch (err) {
@@ -71,6 +85,7 @@ module.exports.confirmRide = async (req, res) => {
     try {
         const ride = await rideService.confirmRide({ rideId, captain: req.captain });
 
+        console.log('Sending ride-confirmed to user:', ride.user.socketId, ride);
         sendMessageToSocketId(ride.user.socketId, {
             event: 'ride-confirmed',
             data: ride
@@ -129,5 +144,5 @@ module.exports.endRide = async (req, res) => {
         return res.status(200).json(ride);
     } catch (err) {
         return res.status(500).json({ message: err.message });
-    } s
+    }
 }

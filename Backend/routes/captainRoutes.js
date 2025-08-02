@@ -27,4 +27,14 @@ router.get('/profile', authMiddleware.authCaptain, captainController.getCaptainP
 
 router.get('/logout', authMiddleware.authCaptain, captainController.logoutCaptain);
 
+router.get('/stats', authMiddleware.authCaptain, captainController.getCaptainStats);
+
+// Test endpoint to check captain status
+router.get('/test-status', authMiddleware.authCaptain, (req, res) => {
+    res.json({ 
+        captain: req.captain,
+        message: 'Captain is active and connected'
+    });
+});
+
 module.exports=router;

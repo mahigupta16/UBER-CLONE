@@ -1,19 +1,33 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { Link, useLocation } from 'react-router-dom' // Added useLocation
 import { useEffect, useContext } from 'react'
 import { SocketContext } from '../context/SocketContext'
 import { useNavigate } from 'react-router-dom'
 import LiveTracking from '../components/LiveTracking'
+import RideCompleted from '../components/RideCompleted'
 
 const Riding = () => {
     const location = useLocation()
     const { ride } = location.state || {} // Retrieve ride data
     const { socket } = useContext(SocketContext)
     const navigate = useNavigate()
+    const [showCompletion, setShowCompletion] = useState(false)
 
-    socket.on("ride-ended", () => {
+    useEffect(() => {
+        const handleRideEnded = () => {
+            setShowCompletion(true)
+        }
+
+        socket.on("ride-ended", handleRideEnded)
+
+        return () => {
+            socket.off("ride-ended", handleRideEnded)
+        }
+    }, [socket])
+
+    const handleReturnHome = () => {
         navigate('/home')
-    })
+    }
 
 
     return (
@@ -22,7 +36,10 @@ const Riding = () => {
                 <i className="text-lg font-medium ri-home-5-line"></i>
             </Link>
             <div className='h-1/2'>
-                <LiveTracking />
+                <LiveTracking 
+                    pickupCoords={ride?.pickupCoords ? { lat: ride.pickupCoords.ltd, lng: ride.pickupCoords.lng } : null}
+                    destinationCoords={ride?.destinationCoords ? { lat: ride.destinationCoords.ltd, lng: ride.destinationCoords.lng } : null}
+                />
 
             </div>
             <div className='h-1/2 p-4'>
@@ -57,6 +74,14 @@ const Riding = () => {
                 </div>
                 <button className='w-full mt-5 bg-green-600 text-white font-semibold p-2 rounded-lg'>Make a Payment</button>
             </div>
+            
+            {/* Ride Completion Popup */}
+            {showCompletion && (
+                <RideCompleted 
+                    ride={ride} 
+                    onReturnHome={handleReturnHome}
+                />
+            )}
         </div>
     )
 }

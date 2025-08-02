@@ -9,7 +9,7 @@ router.post('/create',
     authMiddleware.authUser,
     body('pickup').isString().isLength({ min: 3 }).withMessage('Invalid pickup address'),
     body('destination').isString().isLength({ min: 3 }).withMessage('Invalid destination address'),
-    body('vehicleType').isString().isIn([ 'auto', 'car', 'moto' ]).withMessage('Invalid vehicle type'),
+    body('vehicleType').isString().isIn([ 'auto', 'car', 'motorcycle' ]).withMessage('Invalid vehicle type'),
     rideController.createRide
 )
 
@@ -39,6 +39,20 @@ router.post('/end-ride',
     rideController.endRide
 )
 
+// Test endpoint to manually trigger ride creation (for debugging)
+router.post('/test-create-ride',
+    authMiddleware.authUser,
+    body('pickup').isString().isLength({ min: 3 }).withMessage('Invalid pickup address'),
+    body('destination').isString().isLength({ min: 3 }).withMessage('Invalid destination address'),
+    body('vehicleType').isString().isIn([ 'auto', 'car', 'motorcycle' ]).withMessage('Invalid vehicle type'),
+    rideController.createRide
+)
 
+// Simple test endpoint without authentication
+router.post('/debug-create-ride', (req, res) => {
+    console.log('Debug: Manual ride creation triggered');
+    // This will help us test the flow without authentication
+    res.json({ message: 'Debug ride creation endpoint called' });
+})
 
 module.exports = router;

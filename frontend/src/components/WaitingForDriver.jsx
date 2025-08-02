@@ -4,16 +4,19 @@ const WaitingForDriver = (props) => {
   return (
     <div>
       <h5 className='p-1 text-center w-[93%] absolute top-0' onClick={() => {
-        props.waitingForDriver(false)
+        props.setWaitingForDriver(false)
       }}><i className="text-3xl text-gray-200 ri-arrow-down-wide-line"></i></h5>
 
       <div className='flex items-center justify-between'>
-        <img className='h-12' src="https://swyft.pl/wp-content/uploads/2023/05/how-many-people-can-a-uberx-take.jpg" alt="" />
+        <img className='h-12 w-12 rounded-full object-cover' src="https://i.pinimg.com/236x/af/26/28/af26280b0ca305be47df0b799ed1b12b.jpg" alt="" />
         <div className='text-right'>
-          <h2 className='text-lg font-medium capitalize'>{props.ride?.captain.fullname.firstname}</h2>
-          <h4 className='text-xl font-semibold -mt-1 -mb-1'>{props.ride?.captain.vehicle.plate}</h4>
-          <p className='text-sm text-gray-600'>Maruti Suzuki Alto</p>
-          <h1 className='text-lg font-semibold'>  {props.ride?.otp} </h1>
+          <h2 className='text-lg font-medium capitalize'>{props.ride?.captain?.fullname?.firstname || 'Captain'}</h2>
+          <h4 className='text-xl font-semibold -mt-1 -mb-1'>{props.ride?.captain?.vehicle?.plate || 'Vehicle'}</h4>
+          <p className='text-sm text-gray-600'>Your driver is on the way</p>
+          <div className='mt-2'>
+            <h3 className='text-sm text-gray-600'>Share this OTP with your driver</h3>
+            <h1 className='text-2xl font-bold text-green-600'>  {props.ride?.otp || '000000'} </h1>
+          </div>
         </div>
       </div>
 

@@ -7,7 +7,7 @@ module.exports.createCaptain =async ({firstname, lastname, email, password, colo
         throw new Error('All fields are required');
     }
 
-    const captain = captainModel.create({
+    const captain = await captainModel.create({
         fullname:{
             firstname,
             lastname
@@ -19,6 +19,11 @@ module.exports.createCaptain =async ({firstname, lastname, email, password, colo
             plate,
             capacity,
             vehicleType
+        },
+        status: 'active', // Set captain as active by default
+        location: {
+            type: 'Point',
+            coordinates: [0, 0] // Default location, will be updated when captain joins
         }
     })
 

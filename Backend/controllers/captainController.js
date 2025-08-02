@@ -75,3 +75,17 @@ module.exports.logoutCaptain = async (req, res, next) => {
 
     res.status(200).json({ message: 'Logout successfully' });
 }
+
+module.exports.getCaptainStats = async (req, res, next) => {
+    try {
+        const captain = await captainModel.findById(req.captain._id);
+        res.status(200).json({ 
+            totalTrips: captain.totalTrips,
+            totalEarnings: captain.totalEarnings,
+            totalHours: captain.totalHours,
+            totalDistance: captain.totalDistance
+        });
+    } catch (error) {
+        res.status(500).json({ message: 'Error fetching captain stats' });
+    }
+}

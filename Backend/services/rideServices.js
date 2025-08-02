@@ -13,19 +13,19 @@ async function getFare(pickup, destination) {
   const baseFare = {
     auto: 30,
     car: 50,
-    moto: 20,
+    motorcycle: 20,
   };
 
   const perKmRate = {
     auto: 10,
     car: 15,
-    moto: 8,
+    motorcycle: 8,
   };
 
   const perMinuteRate = {
     auto: 2,
     car: 3,
-    moto: 1.5,
+    motorcycle: 1.5,
   };
 
   const fare = {
@@ -39,10 +39,10 @@ async function getFare(pickup, destination) {
         (distanceTime.distance / 1000) * perKmRate.car +
         (distanceTime.duration / 60) * perMinuteRate.car
     ),
-    moto: Math.round(
-      baseFare.moto +
-        (distanceTime.distance / 1000) * perKmRate.moto +
-        (distanceTime.duration / 60) * perMinuteRate.moto
+    motorcycle: Math.round(
+      baseFare.motorcycle +
+        (distanceTime.distance / 1000) * perKmRate.motorcycle +
+        (distanceTime.duration / 60) * perMinuteRate.motorcycle
     ),
   };
 
@@ -66,19 +66,26 @@ module.exports.createRide = async ({
   pickup,
   destination,
   vehicleType,
+  pickupCoords,
+  destinationCoords,
 }) => {
   if (!user || !pickup || !destination || !vehicleType) {
     throw new Error("All fields are required");
   }
 
   const fare = await getFare(pickup, destination);
+  const distanceTime = await require('./mapsService').getDistanceTime(pickup, destination);
 
-  const ride = rideModel.create({
+  const ride = await rideModel.create({
     user,
     pickup,
     destination,
+    pickupCoords,
+    destinationCoords,
     otp: getOtp(6),
     fare: fare[vehicleType],
+    distance: distanceTime.distance,
+    duration: distanceTime.duration,
   });
 
   return ride;
@@ -181,6 +188,17 @@ module.exports.endRide = async ({ rideId, captain }) => {
       status: "completed",
     }
   );
+
+  // Update captain stats
+  const captainModel = require('../models/captain.model');
+  await captainModel.findByIdAndUpdate(captain._id, {
+    $inc: {
+      totalTrips: 1,
+      totalEarnings: ride.fare,
+      totalDistance: ride.distance || 0,
+      totalHours: Math.round((ride.duration || 0) / 3600) // Convert seconds to hours, round to whole number
+    }
+  });
 
   return ride;
 };

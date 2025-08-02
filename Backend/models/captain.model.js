@@ -11,6 +11,7 @@ const captainSchema = new mongoose.Schema({
         },
         lastname: {
             type: String,
+            required: true,
             minlength: [ 3, 'Lastname must be at least 3 characters long' ],
         }
     },
@@ -60,12 +61,33 @@ const captainSchema = new mongoose.Schema({
     },
 
     location: {
-        ltd: {
-            type: Number,
+        type: {
+            type: String,
+            enum: ['Point'],
+            default: 'Point'
         },
-        lng: {
-            type: Number,
+        coordinates: {
+            type: [Number],
+            required: true
         }
+    },
+    
+    // Stats fields
+    totalTrips: {
+        type: Number,
+        default: 0
+    },
+    totalEarnings: {
+        type: Number,
+        default: 0
+    },
+    totalHours: {
+        type: Number,
+        default: 0
+    },
+    totalDistance: {
+        type: Number,
+        default: 0
     }
 })
 
@@ -84,6 +106,9 @@ captainSchema.methods.comparePassword = async function (password) {
 captainSchema.statics.hashPassword = async function (password) {
     return await bcrypt.hash(password, 10);
 }
+
+// Create geospatial index for location queries
+captainSchema.index({ location: '2dsphere' });
 
 const captainModel = mongoose.model('captain', captainSchema)
 

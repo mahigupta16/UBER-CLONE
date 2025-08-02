@@ -1,6 +1,13 @@
 import React from 'react'
 
 const RidePopUp = (props) => {
+    // Function to format distance
+    const formatDistance = (distanceInMeters) => {
+        if (!distanceInMeters) return '0 KM'
+        const distanceInKm = (distanceInMeters / 1000).toFixed(1)
+        return `${distanceInKm} KM`
+    }
+
     return (
         <div>
             <h5 className='p-1 text-center w-[93%] absolute top-0' onClick={() => {
@@ -12,7 +19,7 @@ const RidePopUp = (props) => {
                     <img className='h-12 rounded-full object-cover w-12' src="https://i.pinimg.com/236x/af/26/28/af26280b0ca305be47df0b799ed1b12b.jpg" alt="" />
                     <h2 className='text-lg font-medium'>{props.ride?.user.fullname.firstname + " " + props.ride?.user.fullname.lastname}</h2>
                 </div>
-                <h5 className='text-lg font-semibold'>2.2 KM</h5>
+                <h5 className='text-lg font-semibold'>{formatDistance(props.ride?.distance)}</h5>
             </div>
             <div className='flex gap-2 justify-between flex-col items-center'>
                 <div className='w-full mt-5'>
