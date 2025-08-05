@@ -39,6 +39,16 @@ router.post('/end-ride',
     rideController.endRide
 )
 
+router.get('/user-history',
+    authMiddleware.authUser,
+    rideController.getUserRideHistory
+)
+
+router.get('/captain-history',
+    authMiddleware.authCaptain,
+    rideController.getCaptainRideHistory
+)
+
 // Test endpoint to manually trigger ride creation (for debugging)
 router.post('/test-create-ride',
     authMiddleware.authUser,

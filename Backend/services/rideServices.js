@@ -195,7 +195,7 @@ module.exports.endRide = async ({ rideId, captain }) => {
     $inc: {
       totalTrips: 1,
       totalEarnings: ride.fare,
-      totalDistance: ride.distance || 0,
+      totalDistance: Math.round((ride.distance || 0) / 1000), // Convert meters to km and round to whole number
       totalHours: Math.round((ride.duration || 0) / 3600) // Convert seconds to hours, round to whole number
     }
   });

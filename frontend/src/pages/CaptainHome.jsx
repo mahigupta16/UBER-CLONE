@@ -13,6 +13,7 @@ const CaptainHome = () => {
 
     const [ ridePopupPanel, setRidePopupPanel ] = useState(false)
     const [ confirmRidePopupPanel, setConfirmRidePopupPanel ] = useState(false)
+    const [ menuOpen, setMenuOpen ] = useState(false)
 
     const ridePopupPanelRef = useRef(null)
     const confirmRidePopupPanelRef = useRef(null)
@@ -132,9 +133,35 @@ const CaptainHome = () => {
             {/* Header */}
             <div className='fixed top-0 left-0 flex items-center justify-between w-full z-20 bg-transparent h-16 px-4 pointer-events-none'>
                 <img className='w-12 h-12 object-contain ml-2 pointer-events-auto' src="https://www.svgrepo.com/show/505031/uber-driver.svg" alt="Captain Icon" />
-                <Link to='/captain-login' className='h-10 w-10 bg-slate-100 hover:bg-slate-200 flex items-center justify-center rounded-full transition-all duration-200 shadow-sm hover:shadow-md pointer-events-auto'>
-                    <i className="text-lg font-medium ri-logout-box-r-line text-slate-700"></i>
-                </Link>
+                <div className='relative pointer-events-auto'>
+                    <button 
+                        onClick={() => setMenuOpen(!menuOpen)}
+                        className='h-10 w-10 bg-slate-100 hover:bg-slate-200 flex items-center justify-center rounded-full transition-all duration-200 shadow-sm hover:shadow-md'
+                    >
+                        <i className="text-lg font-medium ri-menu-line text-slate-700"></i>
+                    </button>
+                    
+                    {menuOpen && (
+                        <div className='absolute right-0 top-12 bg-white rounded-lg shadow-lg border border-slate-200 min-w-48 py-2'>
+                            <Link 
+                                to='/captain-ride-history' 
+                                className='flex items-center gap-3 px-4 py-2 hover:bg-slate-50 text-slate-700'
+                                onClick={() => setMenuOpen(false)}
+                            >
+                                <i className="ri-history-line"></i>
+                                <span>Ride History</span>
+                            </Link>
+                            <Link 
+                                to='/captain-login' 
+                                className='flex items-center gap-3 px-4 py-2 hover:bg-slate-50 text-slate-700'
+                                onClick={() => setMenuOpen(false)}
+                            >
+                                <i className="ri-logout-box-r-line"></i>
+                                <span>Logout</span>
+                            </Link>
+                        </div>
+                    )}
+                </div>
             </div>
             
             {/* Map Section */}

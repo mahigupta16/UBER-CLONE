@@ -28,7 +28,6 @@ const LookingForDriver = (props) => {
         }
         // Always close the panel and reset UI
         if (props.setVehicleFound) props.setVehicleFound(false)
-        navigate('/home')
     }
 
     return (

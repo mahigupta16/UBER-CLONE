@@ -143,9 +143,33 @@ module.exports.endRide = async (req, res) => {
             data: ride
         })
 
-
-
         return res.status(200).json(ride);
+    } catch (err) {
+        return res.status(500).json({ message: err.message });
+    }
+}
+
+module.exports.getUserRideHistory = async (req, res) => {
+    try {
+        const rides = await rideModel.find({ user: req.user._id })
+            .populate('captain', 'fullname')
+            .sort({ createdAt: -1 })
+            .limit(50);
+
+        return res.status(200).json(rides);
+    } catch (err) {
+        return res.status(500).json({ message: err.message });
+    }
+}
+
+module.exports.getCaptainRideHistory = async (req, res) => {
+    try {
+        const rides = await rideModel.find({ captain: req.captain._id })
+            .populate('user', 'fullname')
+            .sort({ createdAt: -1 })
+            .limit(50);
+
+        return res.status(200).json(rides);
     } catch (err) {
         return res.status(500).json({ message: err.message });
     }
