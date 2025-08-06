@@ -8,12 +8,14 @@ import { SocketContext } from '../context/SocketContext'
 import { CaptainDataContext } from '../context/CaptainContext'
 import axios from 'axios'
 import LiveTracking from '../components/LiveTracking'
+import About from '../components/About'
 
 const CaptainHome = () => {
 
     const [ ridePopupPanel, setRidePopupPanel ] = useState(false)
     const [ confirmRidePopupPanel, setConfirmRidePopupPanel ] = useState(false)
     const [ menuOpen, setMenuOpen ] = useState(false)
+    const [ aboutOpen, setAboutOpen ] = useState(false)
 
     const ridePopupPanelRef = useRef(null)
     const confirmRidePopupPanelRef = useRef(null)
@@ -93,13 +95,14 @@ const CaptainHome = () => {
     }, [socket]);
 
     async function confirmRide() {
+        if (!captain?._id || !ride?._id) {
+            console.error('Missing captain or ride data');
+            return;
+        }
 
         const response = await axios.post(`${import.meta.env.VITE_BASE_URL}/rides/confirm`, {
-
             rideId: ride._id,
             captainId: captain._id,
-
-
         }, {
             headers: {
                 Authorization: `Bearer ${localStorage.getItem('token')}`
@@ -108,7 +111,6 @@ const CaptainHome = () => {
 
         setRidePopupPanel(false)
         setConfirmRidePopupPanel(true)
-
     }
 
 
@@ -143,6 +145,16 @@ const CaptainHome = () => {
                     
                     {menuOpen && (
                         <div className='absolute right-0 top-12 bg-white rounded-lg shadow-lg border border-slate-200 min-w-48 py-2'>
+                            <button 
+                                onClick={() => {
+                                    setAboutOpen(true)
+                                    setMenuOpen(false)
+                                }}
+                                className='flex items-center gap-3 px-4 py-2 hover:bg-slate-50 text-slate-700 w-full text-left'
+                            >
+                                <i className="ri-user-line"></i>
+                                <span>About</span>
+                            </button>
                             <Link 
                                 to='/captain-ride-history' 
                                 className='flex items-center gap-3 px-4 py-2 hover:bg-slate-50 text-slate-700'
@@ -196,6 +208,13 @@ const CaptainHome = () => {
                     ride={ride}
                     setConfirmRidePopupPanel={setConfirmRidePopupPanel} setRidePopupPanel={setRidePopupPanel} />
             </div>
+            
+            {/* About Modal */}
+            <About 
+                isOpen={aboutOpen}
+                onClose={() => setAboutOpen(false)}
+                userType="captain"
+            />
         </div>
     )
 }

@@ -15,12 +15,14 @@ import { useNavigate } from 'react-router-dom';
 import LiveTracking from '../components/LiveTracking';
 import { Link } from 'react-router-dom';
 
+
 const Home = () => {
     const [ pickup, setPickup ] = useState('')
     const [ destination, setDestination ] = useState('')
     const [ panelOpen, setPanelOpen ] = useState(false)
     const [ menuOpen, setMenuOpen ] = useState(false)
     const [ isDarkMode, setIsDarkMode ] = useState(false)
+
     const vehiclePanelRef = useRef(null)
     const confirmRidePanelRef = useRef(null)
     const vehicleFoundRef = useRef(null)
@@ -82,8 +84,10 @@ const Home = () => {
     }
 
     useEffect(() => {
-        socket.emit("join", { userType: "user", userId: user._id })
-    }, [ user ])
+        if (user?._id) {
+            socket.emit("join", { userType: "user", userId: user._id })
+        }
+    }, [ user, socket ])
 
     useEffect(() => {
         const handleRideConfirmed = (ride) => {
@@ -399,6 +403,8 @@ const Home = () => {
                     waitingForDriver={waitingForDriver}
                     showOtpInput={showOtpInput} />
             </div>
+            
+
         </div>
     )
 }
