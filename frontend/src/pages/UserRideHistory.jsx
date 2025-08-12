@@ -104,7 +104,7 @@ const UserRideHistory = () => {
                                         </div>
                                         <div>
                                             <p className="font-semibold text-gray-900">
-                                                {ride.pickup} → {ride.destination}
+                                                {ride.pickup} → {ride.stops?.length ? `${ride.stops.join(' → ')} → ` : ''}{ride.destination}
                                             </p>
                                             <p className="text-sm text-gray-500">{formatDate(ride.createdAt)}</p>
                                         </div>
@@ -118,6 +118,11 @@ const UserRideHistory = () => {
                                 </div>
                                 
                                 <div className="grid grid-cols-2 gap-4 text-sm text-gray-600">
+                                    {Array.isArray(ride.stops) && ride.stops.length > 0 && (
+                                        <div className="col-span-2 text-xs text-gray-500">
+                                            <span className="font-medium text-gray-700">Stops:</span> {ride.stops.join(' • ')}
+                                        </div>
+                                    )}
                                     <div>
                                         <p className="font-medium">Distance</p>
                                         <p>{formatDistance(ride.distance)}</p>

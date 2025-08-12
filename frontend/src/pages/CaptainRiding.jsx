@@ -29,24 +29,22 @@ const CaptainRiding = () => {
                 </Link>
             </div>
 
-            <div className='h-1/5 p-6 flex items-center justify-between relative bg-yellow-400 pt-10'
-                onClick={() => {
-                    setFinishRidePanel(true)
-                }}
-            >
-                <h5 className='p-1 text-center w-[90%] absolute top-0' onClick={() => {
-                    setFinishRidePanel(true)
-                }}><i className="text-3xl text-gray-800 ri-arrow-up-wide-line"></i></h5>
-                <h4 className='text-xl font-semibold'>{formatDistance(rideData?.distance)}</h4>
-                <button onClick={() => setFinishRidePanel(true)} className=' bg-green-600 text-white font-semibold p-3 px-10 rounded-lg'>Complete Ride</button>
+            <div className='fixed bottom-0 left-0 w-full bg-yellow-400 z-[1010]'>
+                <div className='w-full flex justify-center pt-2' onClick={() => setFinishRidePanel(true)}>
+                    <i className="ri-arrow-up-s-line text-2xl text-black/70"></i>
+                </div>
+                <div className='p-6 pt-2 flex items-center justify-between'>
+                    <h4 className='text-xl font-semibold'>{formatDistance(rideData?.distance)}</h4>
+                    <button onClick={() => setFinishRidePanel(true)} className='bg-green-600 text-white font-semibold p-3 px-10 rounded-lg'>Complete Ride</button>
+                </div>
             </div>
-            <div className={`fixed w-full z-[500] bottom-0 ${finishRidePanel ? 'translate-y-0' : 'translate-y-full'} bg-white px-3 pt-10 pb-4 shadow-xl border-t border-slate-200 rounded-t-2xl max-h-[80vh] overflow-y-auto transition-transform duration-300 ease-in-out`}>
+            <div className={`fixed left-0 w-full z-[2000] bottom-0 ${finishRidePanel ? 'translate-y-0' : 'translate-y-full'} bg-white px-3 pt-10 pb-[env(safe-area-inset-bottom,1rem)] shadow-xl border-t border-slate-200 rounded-t-2xl max-h-[80vh] overflow-y-auto transition-transform duration-300 ease-in-out`}>
                 <FinishRide
                     ride={rideData}
                     setFinishRidePanel={setFinishRidePanel} />
             </div>
 
-            <div className='h-screen fixed w-screen top-0 z-[-1]'>
+            <div className='h-screen fixed w-screen top-0 z-0 pointer-events-auto'>
                 <LiveTracking
                     isCaptain={true}
                     pickupCoords={rideData?.pickupCoords ? { lat: rideData.pickupCoords.ltd, lng: rideData.pickupCoords.lng } : null}

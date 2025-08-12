@@ -133,7 +133,7 @@ const CaptainHome = () => {
     return (
         <div className='h-screen flex flex-col'>
             {/* Header */}
-            <div className='fixed top-0 left-0 flex items-center justify-between w-full z-20 bg-transparent h-16 px-4 pointer-events-none'>
+            <div className='fixed top-0 left-0 flex items-center justify-between w-full z-[3000] bg-transparent h-16 px-4 pointer-events-none'>
                 <img className='w-12 h-12 object-contain ml-2 pointer-events-auto' src="https://www.svgrepo.com/show/505031/uber-driver.svg" alt="Captain Icon" />
                 <div className='relative pointer-events-auto'>
                     <button 
@@ -144,7 +144,7 @@ const CaptainHome = () => {
                     </button>
                     
                     {menuOpen && (
-                        <div className='absolute right-0 top-12 bg-white rounded-lg shadow-lg border border-slate-200 min-w-48 py-2'>
+                        <div className='absolute right-0 top-12 bg-white rounded-lg shadow-lg border border-slate-200 min-w-48 py-2 z-[3100]'>
                             <button 
                                 onClick={() => {
                                     setAboutOpen(true)
@@ -189,12 +189,12 @@ const CaptainHome = () => {
             </div>
             
             {/* Captain Details Section */}
-            <div className='bg-white border-t border-slate-200 p-4 max-h-48 overflow-y-auto shadow-md'>
+            <div className='bg-white border-t border-slate-200 p-4 max-h-48 overflow-y-auto shadow-md pointer-events-auto'>
                 <CaptainDetails />
             </div>
             
             {/* Ride Popup */}
-            <div ref={ridePopupPanelRef} className='fixed w-full z-50 bottom-0 translate-y-full bg-white px-3 py-8 pt-10 shadow-xl border-t-2 border-slate-200 transition-transform duration-300 ease-in-out rounded-t-2xl max-h-[80vh] overflow-y-auto'>
+            <div ref={ridePopupPanelRef} className='fixed left-0 right-0 bottom-0 z-[2500] translate-y-full bg-white px-3 py-8 pt-10 shadow-xl border-t-2 border-slate-200 transition-transform duration-300 ease-in-out rounded-t-2xl h-[88vh] max-h-[92vh] flex flex-col overflow-hidden pb-[env(safe-area-inset-bottom,0.75rem)] pointer-events-auto'>
                 <RidePopUp
                     ride={ride}
                     setRidePopupPanel={setRidePopupPanel}
@@ -204,7 +204,7 @@ const CaptainHome = () => {
             </div>
             
             {/* Confirm Ride Popup */}
-            <div ref={confirmRidePopupPanelRef} className='fixed w-full z-50 bottom-0 translate-y-full bg-white px-3 pt-10 pb-4 shadow-xl border-t-2 border-slate-200 transition-transform duration-300 ease-in-out rounded-t-2xl max-h-[80vh] overflow-y-auto'>
+            <div ref={confirmRidePopupPanelRef} className='fixed left-0 right-0 bottom-0 z-[2500] translate-y-full bg-white px-3 pt-10 shadow-xl border-t-2 border-slate-200 transition-transform duration-300 ease-in-out rounded-t-2xl h-[88vh] max-h-[92vh] flex flex-col overflow-hidden pb-[env(safe-area-inset-bottom,0.75rem)] pointer-events-auto'>
                 <ConfirmRidePopUp
                     ride={ride}
                     setConfirmRidePopupPanel={setConfirmRidePopupPanel} setRidePopupPanel={setRidePopupPanel} />

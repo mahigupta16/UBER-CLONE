@@ -72,7 +72,7 @@ const LiveTracking = ({ className = "h-screen w-full", pickupCoords = null, dest
 
     return (
         <div className={className}>
-            <MapContainer center={centerPosition} zoom={15} style={{ height: '100%', width: '100%', zIndex: 0 }} scrollWheelZoom={true} zoomControl={true} dragging={true} doubleClickZoom={true}>
+            <MapContainer center={centerPosition} zoom={15} style={{ height: '100%', width: '100%' }} scrollWheelZoom={true} zoomControl={true} dragging={true} doubleClickZoom={true}>
                 <TileLayer
                     url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
                     attribution='&copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors'

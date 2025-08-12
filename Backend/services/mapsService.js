@@ -3,11 +3,22 @@ const captainModel = require('../models/captain.model');
 
 const ORS_API_KEY = process.env.ORS_API_KEY;
 
-// Get coordinates from address
+// Get coordinates from address or "lat,lng" string
 module.exports.getAddressCoordinate = async (address) => {
-    const url = `https://api.openrouteservice.org/geocode/search?api_key=${ORS_API_KEY}&text=${encodeURIComponent(address)}`;
-
     try {
+        // If input looks like a "lat,lng" string, parse directly to avoid geocoding
+        if (typeof address === 'string' && address.includes(',')) {
+            const parts = address.split(',').map(s => s.trim());
+            if (parts.length === 2) {
+                const lat = parseFloat(parts[0]);
+                const lng = parseFloat(parts[1]);
+                if (!Number.isNaN(lat) && !Number.isNaN(lng) && lat <= 90 && lat >= -90 && lng <= 180 && lng >= -180) {
+                    return { ltd: lat, lng };
+                }
+            }
+        }
+
+        const url = `https://api.openrouteservice.org/geocode/search?api_key=${ORS_API_KEY}&text=${encodeURIComponent(address)}`;
         const response = await axios.get(url);
         const features = response.data.features;
 
@@ -33,7 +44,7 @@ module.exports.getDistanceTime = async (origin, destination) => {
     }
 
     try {
-        // Get coordinates of origin and destination
+        // Get coordinates of origin and destination (supports address or "lat,lng")
         const originCoords = await module.exports.getAddressCoordinate(origin);
         const destinationCoords = await module.exports.getAddressCoordinate(destination);
 

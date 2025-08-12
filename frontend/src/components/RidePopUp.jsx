@@ -21,7 +21,7 @@ const RidePopUp = (props) => {
 
       <div className="flex flex-col h-full">
         {/* Scrollable Content */}
-        <div className="flex-1 overflow-y-auto">
+        <div className="flex-1 overflow-y-auto pr-1">
           {/* Everything ABOVE the buttons goes here */}
           <h3 className="text-2xl font-bold mb-5 text-slate-800">
             New Ride Available!

@@ -15,6 +15,17 @@ const FinishRide = (props) => {
         return `${distanceInKm} KM`
     }
 
+    // Function to format duration (seconds -> human readable)
+    const formatDuration = (seconds) => {
+        if (!seconds) return '—'
+        const mins = Math.round(seconds / 60)
+        if (mins < 60) return `${mins} min`
+        const h = Math.floor(mins / 60)
+        const m = mins % 60
+        return `${h} hr ${m} min`
+    }
+
+
     async function endRide() {
         const response = await axios.post(`${import.meta.env.VITE_BASE_URL}/rides/end-ride`, {
 
@@ -84,21 +95,33 @@ const FinishRide = (props) => {
                     </div>
 
                     {/* Fare */}
-                    <div className='flex items-center gap-5 p-3'>
+                    <div className='flex items-center gap-5 p-3 border-b-2'>
                         <i className="ri-currency-line"></i>
                         <div>
                             <h3 className='text-lg font-medium'>₹{props.ride?.fare} </h3>
                             <p className='text-sm -mt-1 text-gray-600'>Cash</p>
                         </div>
                     </div>
+
+                    {/* Duration */}
+                    <div className='flex items-center gap-5 p-3'>
+                        <i className="ri-time-line"></i>
+                        <div>
+                            <h3 className='text-lg font-medium'>Duration</h3>
+                            <p className='text-sm -mt-1 text-gray-600'>{formatDuration(props.ride?.duration)}</p>
+                        </div>
+                    </div>
                 </div>
 
                 <div className='mt-4 w-full'>
-
-                    <button
-                        onClick={endRide}
-                        className='w-full mt-5 flex  text-lg justify-center bg-green-600 text-white font-semibold p-3 rounded-lg'>Finish Ride</button>
-
+                    <div className='bottom-2 grid grid-cols-2 gap-3'>
+                        <button
+                            onClick={endRide}
+                            className='w-full mt-2 mb-3 text-lg flex justify-center  bg-green-600 hover:bg-green-700 text-white font-semibold p-3 rounded-lg shadow-sm'>Finish Ride</button>
+                        <button
+                            onClick={() => props.setFinishRidePanel(false)}
+                            className='w-full mt-2 mb-3 text-lg flex justify-center border-black bg-gray-100 hover:bg-gray-200 text-slate-800 font-semibold p-3 rounded-lg border border-slate-200'>Close</button>
+                    </div>
                 </div>
             </div>
         </div>

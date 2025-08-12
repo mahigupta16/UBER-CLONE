@@ -1,3 +1,4 @@
+
 import React, { useEffect, useRef, useState } from 'react'
 import { useGSAP } from '@gsap/react';
 import gsap from 'gsap';
@@ -340,8 +341,9 @@ const Home = () => {
                     )}
                 </div>
             </div>
-            <div className='h-screen w-screen'>
+            <div className='fixed inset-0 z-0 pointer-events-auto'>
                 <LiveTracking
+                    className="h-full w-full"
                     pickupCoords={ride?.pickupCoords ? { lat: ride.pickupCoords.ltd, lng: ride.pickupCoords.lng } : null}
                     destinationCoords={ride?.destinationCoords ? { lat: ride.destinationCoords.ltd, lng: ride.destinationCoords.lng } : null}
                     stopsCoords={ride?.stopsCoords ? ride.stopsCoords.map(s => ({ lat: s.ltd, lng: s.lng })) : []}
@@ -349,8 +351,9 @@ const Home = () => {
                     zoomControl={true}
                 />
             </div>
-            <div className=' flex flex-col justify-end h-full absolute top-0 w-full'>
-                <div className={`p-4 bg-white relative transition-all duration-300 ${panelOpen ? 'h-full' : 'h-[32%]'} flexy flex-col`}>
+            <div className='fixed inset-0 z-10 flex flex-col justify-end'>
+                <div className={`p-4 bg-white relative transition-all duration-300 ${panelOpen ? 'h-full' : 'h-[36%]'} flexy flex-col rounded-t-2xl shadow-xl border-t border-slate-200`}>
+                    <button onClick={() => setPanelOpen(!panelOpen)} className='absolute left-1/2 -top-3 -translate-x-1/2 w-12 h-1.5 rounded-full bg-slate-300'></button>
                 <h5 ref={panelCloseRef} onClick={() => {
                     setPanelOpen(false)
                 }} className={`absolute right-6 top-6 text-2xl transition-all duration-300 ${panelOpen ? 'opacity-100' : 'opacity-0'}`}>

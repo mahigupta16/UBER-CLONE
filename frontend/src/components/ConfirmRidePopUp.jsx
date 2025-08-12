@@ -39,10 +39,11 @@ const ConfirmRidePopUp = (props) => {
 
     }
     return (
-        <div>
+        <div className='h-full flex flex-col'>
             <h5 className='p-1 text-center w-[93%] absolute top-0' onClick={() => {
                 props.setConfirmRidePopupPanel(false)
             }}><i className="text-3xl text-gray-200 ri-arrow-down-wide-line"></i></h5>
+            <div className='flex-1 overflow-y-auto pr-1'>
             <h3 className='text-2xl font-semibold mb-4'>Confirm this ride to Start</h3>
             <div className='flex items-center justify-between p-3 border-2 border-yellow-400 rounded-lg'>
                 <div className='flex items-center gap-3 '>
@@ -112,6 +113,7 @@ const ConfirmRidePopUp = (props) => {
                     </form>
                 </div>
             </div>
+        </div>
         </div>
     )
 }
