@@ -36,9 +36,10 @@ const Riding = () => {
                 <i className="text-lg font-medium ri-home-5-line"></i>
             </Link>
             <div className='h-1/2'>
-                <LiveTracking 
+                <LiveTracking
                     pickupCoords={ride?.pickupCoords ? { lat: ride.pickupCoords.ltd, lng: ride.pickupCoords.lng } : null}
                     destinationCoords={ride?.destinationCoords ? { lat: ride.destinationCoords.ltd, lng: ride.destinationCoords.lng } : null}
+                    stopsCoords={ride?.stopsCoords ? ride.stopsCoords.map(s => ({ lat: s.ltd, lng: s.lng })) : []}
                 />
 
             </div>

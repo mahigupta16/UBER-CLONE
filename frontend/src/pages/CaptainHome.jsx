@@ -178,11 +178,12 @@ const CaptainHome = () => {
             
             {/* Map Section */}
             <div className='flex-1 relative mt-16'>
-                <LiveTracking 
+                <LiveTracking
                     className="h-full w-full"
                     isCaptain={true}
                     pickupCoords={ride?.pickupCoords ? { lat: ride.pickupCoords.ltd, lng: ride.pickupCoords.lng } : null}
                     destinationCoords={ride?.destinationCoords ? { lat: ride.destinationCoords.ltd, lng: ride.destinationCoords.lng } : null}
+                    stopsCoords={ride?.stopsCoords ? ride.stopsCoords.map(s => ({ lat: s.ltd, lng: s.lng })) : []}
                 />
 
             </div>
@@ -193,7 +194,7 @@ const CaptainHome = () => {
             </div>
             
             {/* Ride Popup */}
-            <div ref={ridePopupPanelRef} className='fixed w-full z-50 bottom-0 translate-y-full bg-white px-3 py-10 pt-12 shadow-xl border-t-2 border-slate-200 transition-transform duration-300 ease-in-out rounded-t-2xl'>
+            <div ref={ridePopupPanelRef} className='fixed w-full z-50 bottom-0 translate-y-full bg-white px-3 py-8 pt-10 shadow-xl border-t-2 border-slate-200 transition-transform duration-300 ease-in-out rounded-t-2xl max-h-[80vh] overflow-y-auto'>
                 <RidePopUp
                     ride={ride}
                     setRidePopupPanel={setRidePopupPanel}
@@ -203,7 +204,7 @@ const CaptainHome = () => {
             </div>
             
             {/* Confirm Ride Popup */}
-            <div ref={confirmRidePopupPanelRef} className='fixed w-full h-screen z-10 bottom-0 translate-y-full bg-white px-3 py-10 pt-12 transition-transform duration-300 ease-in-out shadow-xl'>
+            <div ref={confirmRidePopupPanelRef} className='fixed w-full z-50 bottom-0 translate-y-full bg-white px-3 pt-10 pb-4 shadow-xl border-t-2 border-slate-200 transition-transform duration-300 ease-in-out rounded-t-2xl max-h-[80vh] overflow-y-auto'>
                 <ConfirmRidePopUp
                     ride={ride}
                     setConfirmRidePopupPanel={setConfirmRidePopupPanel} setRidePopupPanel={setRidePopupPanel} />

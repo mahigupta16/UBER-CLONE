@@ -11,19 +11,30 @@ module.exports.createRide = async (req, res) => {
         return res.status(400).json({ errors: errors.array() });
     }
 
-    const { pickup, destination, vehicleType } = req.body;
+    const { pickup, destination, vehicleType, stops = [] } = req.body;
 
     try {
         const pickupCoordinates = await mapService.getAddressCoordinate(pickup);
         const destinationCoordinates = await mapService.getAddressCoordinate(destination);
 
-        const ride = await rideService.createRide({ 
-            user: req.user._id, 
-            pickup, 
-            destination, 
+        // Precompute coords for stops for consistency
+        let stopsCoords = [];
+        if (Array.isArray(stops) && stops.length) {
+            for (const addr of stops) {
+                const c = await mapService.getAddressCoordinate(addr);
+                stopsCoords.push(c);
+            }
+        }
+
+        const ride = await rideService.createRide({
+            user: req.user._id,
+            pickup,
+            destination,
             vehicleType,
             pickupCoords: pickupCoordinates,
-            destinationCoords: destinationCoordinates
+            destinationCoords: destinationCoordinates,
+            stops,
+            stopsCoords
         });
         res.status(201).json(ride);
 
@@ -68,11 +79,12 @@ module.exports.getFare = async (req, res) => {
         return res.status(400).json({ errors: errors.array() });
     }
 
-    const { pickup, destination } = req.query;
+    const { pickup, destination, stops } = req.query;
 
     try {
-        const fare = await rideService.getFare(pickup, destination);
-        return res.status(200).json(fare);
+        const parsedStops = stops ? JSON.parse(stops) : [];
+        const fareResult = await rideService.getFare(pickup, destination, parsedStops);
+        return res.status(200).json(fareResult.fare);
     } catch (err) {
         return res.status(500).json({ message: err.message });
     }

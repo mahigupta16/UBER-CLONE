@@ -3,12 +3,22 @@ const mapService = require("./mapsService");
 const bcrypt = require("bcrypt");
 const crypto = require("crypto");
 
-async function getFare(pickup, destination) {
+async function getFare(pickup, destination, stops = []) {
   if (!pickup || !destination) {
     throw new Error("Pickup and destination are required");
   }
 
-  const distanceTime = await mapService.getDistanceTime(pickup, destination);
+  // Build full path: pickup -> ...stops -> destination
+  const waypoints = [pickup, ...(Array.isArray(stops) ? stops : []), destination];
+
+  // Sum distance and duration across adjacent segments
+  let totalDistance = 0; // meters
+  let totalDuration = 0; // seconds
+  for (let i = 0; i < waypoints.length - 1; i++) {
+    const seg = await mapService.getDistanceTime(waypoints[i], waypoints[i + 1]);
+    totalDistance += seg.distance;
+    totalDuration += seg.duration;
+  }
 
   const baseFare = {
     auto: 30,
@@ -28,25 +38,31 @@ async function getFare(pickup, destination) {
     motorcycle: 1.5,
   };
 
+  const additionalStopFee = 5; // optional small fee per extra stop
+  const extraStopsCount = Math.max(0, waypoints.length - 2 - 0); // exclude pickup and destination
+
   const fare = {
     auto: Math.round(
       baseFare.auto +
-        (distanceTime.distance / 1000) * perKmRate.auto +
-        (distanceTime.duration / 60) * perMinuteRate.auto
+        (totalDistance / 1000) * perKmRate.auto +
+        (totalDuration / 60) * perMinuteRate.auto +
+        additionalStopFee * extraStopsCount
     ),
     car: Math.round(
       baseFare.car +
-        (distanceTime.distance / 1000) * perKmRate.car +
-        (distanceTime.duration / 60) * perMinuteRate.car
+        (totalDistance / 1000) * perKmRate.car +
+        (totalDuration / 60) * perMinuteRate.car +
+        additionalStopFee * extraStopsCount
     ),
     motorcycle: Math.round(
       baseFare.motorcycle +
-        (distanceTime.distance / 1000) * perKmRate.motorcycle +
-        (distanceTime.duration / 60) * perMinuteRate.motorcycle
+        (totalDistance / 1000) * perKmRate.motorcycle +
+        (totalDuration / 60) * perMinuteRate.motorcycle +
+        additionalStopFee * extraStopsCount
     ),
   };
 
-  return fare;
+  return { fare, totalDistance, totalDuration };
 }
 
 module.exports.getFare = getFare;
@@ -68,24 +84,37 @@ module.exports.createRide = async ({
   vehicleType,
   pickupCoords,
   destinationCoords,
+  stops = [],
+  stopsCoords = [],
 }) => {
   if (!user || !pickup || !destination || !vehicleType) {
     throw new Error("All fields are required");
   }
 
-  const fare = await getFare(pickup, destination);
-  const distanceTime = await require('./mapsService').getDistanceTime(pickup, destination);
+  // Ensure we have coordinates for stops if not provided
+  if (!stopsCoords.length && stops.length) {
+    const mapServiceLocal = require('./mapsService');
+    stopsCoords = [];
+    for (const addr of stops) {
+      const c = await mapServiceLocal.getAddressCoordinate(addr);
+      stopsCoords.push(c);
+    }
+  }
+
+  const fareResult = await getFare(pickup, destination, stops);
 
   const ride = await rideModel.create({
     user,
     pickup,
     destination,
+    stops,
     pickupCoords,
+    stopsCoords,
     destinationCoords,
     otp: getOtp(6),
-    fare: fare[vehicleType],
-    distance: distanceTime.distance,
-    duration: distanceTime.duration,
+    fare: fareResult.fare[vehicleType],
+    distance: fareResult.totalDistance,
+    duration: fareResult.totalDuration,
   });
 
   return ride;

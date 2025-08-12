@@ -15,6 +15,11 @@ const rideSchema = new mongoose.Schema({
         type: String,
         required: true,
     },
+    // Optional intermediate stops (addresses)
+    stops: {
+        type: [String],
+        default: [],
+    },
     destination: {
         type: String,
         required: true,
@@ -22,6 +27,16 @@ const rideSchema = new mongoose.Schema({
     pickupCoords: {
         ltd: { type: Number },
         lng: { type: Number }
+    },
+    // Coordinates for intermediate stops (if any)
+    stopsCoords: {
+        type: [
+            new mongoose.Schema({
+                ltd: { type: Number },
+                lng: { type: Number }
+            }, { _id: false })
+        ],
+        default: [],
     },
     destinationCoords: {
         ltd: { type: Number },

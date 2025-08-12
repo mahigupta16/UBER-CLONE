@@ -21,43 +21,61 @@ const RidePopUp = (props) => {
                 </div>
                 <h5 className='text-lg font-bold text-lime-600'>{formatDistance(props.ride?.distance)}</h5>
             </div>
-            <div className='flex gap-2 justify-between flex-col items-center'>
-                <div className='w-full mt-5'>
-                    <div className='flex items-center gap-4 p-3 border-b-2 border-slate-100'>
-                        <i className="ri-map-pin-user-fill text-blue-500 text-xl"></i>
-                        <div>
-                            <h3 className='text-lg font-semibold text-slate-800'>Pickup Location</h3>
-                            <p className='text-sm text-slate-600'>{props.ride?.pickup}</p>
+            <div className='flex flex-col h-full'>
+                {/* Scrollable content */}
+                <div className='flex-1 overflow-y-auto pb-4'>
+                    <div className='w-full mt-5'>
+                        <div className='flex items-center gap-4 p-3 border-b-2 border-slate-100'>
+                            <i className="ri-map-pin-user-fill text-blue-500 text-xl"></i>
+                            <div>
+                                <h3 className='text-lg font-semibold text-slate-800'>Pickup Location</h3>
+                                <p className='text-sm text-slate-600'>{props.ride?.pickup}</p>
+                            </div>
                         </div>
-                    </div>
-                    <div className='flex items-center gap-4 p-3 border-b-2 border-slate-100'>
-                        <i className="text-xl ri-map-pin-2-fill text-slate-500"></i>
-                        <div>
-                            <h3 className='text-lg font-semibold text-slate-800'>Destination</h3>
-                            <p className='text-sm text-slate-600'>{props.ride?.destination}</p>
+
+                        {Array.isArray(props.ride?.stops) && props.ride.stops.length > 0 && (
+                            <div className='p-3 border-b-2 border-slate-100 space-y-2'>
+                                {props.ride.stops.map((s, i) => (
+                                    <div key={`stop-${i}`} className='flex items-center gap-4'>
+                                        <i className="ri-map-pin-2-fill text-amber-500 text-xl mr-1"></i>
+                                        <div>
+                                            <h3 className='text-base font-semibold text-slate-800'>Stop {i + 1}</h3>
+                                            <p className='text-sm text-slate-600'>{s}</p>
+                                        </div>
+                                    </div>
+                                ))}
+                            </div>
+                        )}
+
+                        <div className='flex items-center gap-4 p-3 border-b-2 border-slate-100'>
+                            <i className="text-xl ri-map-pin-2-fill text-slate-500"></i>
+                            <div>
+                                <h3 className='text-lg font-semibold text-slate-800'>Destination</h3>
+                                <p className='text-sm text-slate-600'>{props.ride?.destination}</p>
+                            </div>
                         </div>
-                    </div>
-                    <div className='flex items-center gap-4 p-3'>
-                        <i className="ri-currency-line text-lime-500 text-xl"></i>
-                        <div>
-                            <h3 className='text-lg font-semibold text-slate-800'>₹{props.ride?.fare}</h3>
-                            <p className='text-sm text-slate-600'>Cash Payment</p>
+                        <div className='flex items-center gap-4 p-3'>
+                            <i className="ri-currency-line text-lime-500 text-xl"></i>
+                            <div>
+                                <h3 className='text-lg font-semibold text-slate-800'>₹{props.ride?.fare}</h3>
+                                <p className='text-sm text-slate-600'>Cash Payment</p>
+                            </div>
                         </div>
                     </div>
                 </div>
-                <div className='mt-5 w-full space-y-2'>
-                    <button onClick={() => {
-                        props.setConfirmRidePopupPanel(true)
-                        props.confirmRide()
 
-                    }} className='bg-lime-500 hover:bg-lime-600 w-full text-white font-semibold p-3 px-8 rounded-lg transition-all duration-200 shadow-md hover:shadow-lg transform hover:scale-[1.01]'>Accept Ride</button>
+                {/* Sticky footer with buttons */}
+                <div className='sticky bottom-0 left-0 w-full bg-white pt-4 pb-3 border-t border-slate-200 shadow-lg'>
+                    <div className='w-full space-y-2'>
+                        <button onClick={() => {
+                            props.setConfirmRidePopupPanel(true)
+                            props.confirmRide()
+                        }} className='bg-lime-500 hover:bg-lime-600 w-full text-white font-semibold p-3 px-8 rounded-lg transition-all duration-200 shadow-md hover:shadow-lg transform hover:scale-[1.01]'>Accept Ride</button>
 
-                    <button onClick={() => {
-                        props.setRidePopupPanel(false)
-
-                    }} className='w-full bg-slate-200 hover:bg-slate-300 text-slate-700 font-semibold p-3 px-8 rounded-lg transition-all duration-200'>Ignore</button>
-
-
+                        <button onClick={() => {
+                            props.setRidePopupPanel(false)
+                        }} className='w-full bg-slate-200 hover:bg-slate-300 text-slate-700 font-semibold p-3 px-8 rounded-lg transition-all duration-200'>Ignore</button>
+                    </div>
                 </div>
             </div>
         </div>
