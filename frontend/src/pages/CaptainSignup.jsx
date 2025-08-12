@@ -146,19 +146,22 @@ const CaptainSignup = () => {
                 setVehicleCapacity(e.target.value)
               }}
             />
-            <select
-              required
-              className='bg-[#eeeeee] w-1/2 rounded-lg px-4 py-2 border text-lg placeholder:text-base'
-              value={vehicleType}
-              onChange={(e) => {
-                setVehicleType(e.target.value)
-              }}
-            >
-              <option value="" disabled>Select Vehicle Type</option>
-              <option value="car">Car</option>
-              <option value="auto">Auto</option>
-              <option value="moto">Moto</option>
-            </select>
+            <div className='relative w-1/2'>
+              <select
+                required
+                className='appearance-none bg-[#eeeeee] w-full rounded-lg px-4 py-2 pr-10 border text-base'
+                value={vehicleType}
+                onChange={(e) => {
+                  setVehicleType(e.target.value)
+                }}
+              >
+                <option value="" disabled>Select Vehicle Type</option>
+                <option value="car">Car</option>
+                <option value="auto">Auto</option>
+                <option value="motorcycle">Moto</option>
+              </select>
+              <span className='pointer-events-none absolute inset-y-0 right-3 flex items-center text-gray-500 text-sm'>▼</span>
+            </div>
           </div>
 
           <button

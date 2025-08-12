@@ -62,7 +62,7 @@ const CaptainDetails = () => {
                 </div>
                 <div className='text-center'>
                     <i className="text-2xl mb-2 text-slate-500 ri-booklet-line"></i>
-                    <h5 className='text-lg font-bold text-slate-800'>{stats.totalDistance}</h5>
+                    <h5 className='text-lg font-bold text-slate-800'>{Math.round(stats.totalDistance || 0)}</h5>
                     <p className='text-xs text-slate-600 font-medium'>Total Distance (km)</p>
                 </div>
             </div>

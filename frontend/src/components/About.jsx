@@ -142,7 +142,7 @@ const About = ({ isOpen, onClose, userType }) => {
                                             <div className="flex justify-between">
                                                 <span className="text-blue-700">Total Distance (km):</span>
                                                 <span className="text-blue-800 font-medium">
-                                                    {currentUser.totalDistance ? (currentUser.totalDistance / 1000).toFixed(2) : 0}
+                                                    {currentUser?.totalDistance ? Math.round(currentUser.totalDistance) : 0}
                                                 </span>
                                             </div>
                                         </>
