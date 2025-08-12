@@ -96,7 +96,7 @@ const ConfirmRidePopUp = (props) => {
 
                 <div className='mt-4 w-full'>
                     <form onSubmit={submitHander}>
-                        <label className='block text-sm font-semibold text-slate-700'>Enter OTP from rider</label>
+                        <label className='block text-sm font-semibold text-slate-700'>Enter OTP</label>
                         <input value={otp} onChange={(e) => setOtp(e.target.value)} inputMode='numeric' pattern='[0-9]*' maxLength={6} type="text" className='bg-slate-100 px-6 py-4 tracking-widest font-mono text-lg rounded-lg w-full mt-2 outline-none focus:ring-2 focus:ring-blue-400' placeholder='______' />
 
                         <button className='w-full mt-4 text-lg flex justify-center bg-green-600 hover:bg-green-700 text-white font-semibold p-3 rounded-lg shadow-md'>Confirm</button>
