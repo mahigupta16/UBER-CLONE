@@ -6,17 +6,21 @@ import { BrowserRouter } from 'react-router-dom';
 import UserContext from './context/UserContext.jsx';
 import CaptainContext from './context/CaptainContext.jsx';
 import SocketProvider from './context/SocketContext.jsx';
+import ThemeProvider from './context/ThemeContext.jsx'
+
 
 createRoot(document.getElementById('root')).render(
 
-  <CaptainContext>
-    <UserContext>
-      <SocketProvider>
-        <BrowserRouter>
-          <App />
-        </BrowserRouter>
-      </SocketProvider>
-    </UserContext>
-  </CaptainContext>
+  <ThemeProvider>
+    <CaptainContext>
+      <UserContext>
+        <SocketProvider>
+          <BrowserRouter>
+            <App />
+          </BrowserRouter>
+        </SocketProvider>
+      </UserContext>
+    </CaptainContext>
+  </ThemeProvider>
 
 )

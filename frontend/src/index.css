@@ -1,3 +1,68 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+/* Global dark theme overrides without using Tailwind's dark: classes */
+/* We attach .theme-dark or .theme-light on <html> via ThemeProvider */
+.theme-dark body { background-color: #0b0b0b; color: #e5e7eb; }
+
+/* Panels, cards, surfaces */
+.theme-dark .bg-white { background-color: #111827 !important; }
+.theme-dark .bg-gray-50, .theme-dark .bg-slate-50 { background-color: #0f172a !important; }
+.theme-dark .bg-slate-100, .theme-dark .bg-gray-100 { background-color: #111827 !important; }
+.theme-dark .bg-slate-200, .theme-dark .bg-gray-200 { background-color: #1f2937 !important; }
+.theme-dark .bg-blue-100 { background-color: #1e3a8a22 !important; }
+.theme-dark .bg-lime-100 { background-color: #16653422 !important; }
+.theme-dark .bg-green-100 { background-color: #065f4622 !important; }
+
+/* Borders */
+.theme-dark .border-slate-200, .theme-dark .border-gray-200 { border-color: #374151 !important; }
+.theme-dark .border-t, .theme-dark .border { border-color: #374151 !important; }
+
+/* Text */
+.theme-dark .text-slate-800, .theme-dark .text-gray-900 { color: #e5e7eb !important; }
+.theme-dark .text-slate-700, .theme-dark .text-gray-700 { color: #d1d5db !important; }
+.theme-dark .text-slate-600, .theme-dark .text-gray-600 { color: #9ca3af !important; }
+.theme-dark .text-slate-500, .theme-dark .text-gray-500 { color: #6b7280 !important; }
+.theme-dark .placeholder\:text-slate-500::placeholder { color: #6b7280 !important; }
+
+/* Buttons and chips subtle hovers */
+.theme-dark .hover\:bg-slate-50:hover { background-color: #0b1220 !important; }
+.theme-dark .hover\:bg-slate-200:hover { background-color: #2a3648 !important; }
+.theme-dark .hover\:bg-gray-200:hover { background-color: #2a2a2a !important; }
+
+/* Inputs */
+.theme-dark .bg-slate-100 input, .theme-dark input.bg-slate-100 { background-color: #0f172a !important; }
+.theme-dark input, .theme-dark textarea { color: #e5e7eb !important; }
+
+/* Icons default slate */
+.theme-dark .ri-menu-line,
+.theme-dark .ri-arrow-down-wide-line,
+.theme-dark .ri-history-line,
+.theme-dark .ri-logout-box-r-line,
+.theme-dark .ri-user-line { color: #d1d5db !important; }
+
+/* Menu dropdown shadow tweak */
+.theme-dark .shadow-lg { box-shadow: 0 10px 15px -3px rgba(0,0,0,0.7), 0 4px 6px -2px rgba(0,0,0,0.6) !important; }
+
+/* Light theme explicit base (optional) */
+.theme-light body { background: #ffffff; color: #0f172a; }
+
+/* Dark fixes: LocationSearchPanel suggestion icon pill and hover */
+.theme-dark .bg-\[\#eee\] { background-color: #1f2937 !important; }
+.theme-dark .ri-map-pin-fill { color: #9ca3af !important; }
+.theme-dark .border-gray-50 { border-color: #374151 !important; }
+.theme-dark .hover\:bg-gray-50:hover { background-color: #0b1220 !important; }
+
+/* Dark fixes: Driver details card (WaitingForDriver) */
+.theme-dark .bg-lime-50 { background-color: rgba(22, 101, 52, 0.12) !important; }
+.theme-dark .border-lime-200 { border-color: #166534 !important; }
+
+/* Dark fixes: bottom sheet (Riding.jsx) using bg-white/95 */
+.theme-dark .bg-white\/95 { background-color: rgba(17, 24, 39, 0.95) !important; }
+
+/* Dark fixes: ETA panel (Riding.jsx) */
+.theme-dark .bg-blue-50 { background-color: rgba(30, 58, 138, 0.15) !important; }
+.theme-dark .border-blue-200 { border-color: #1e3a8a !important; }
+
+

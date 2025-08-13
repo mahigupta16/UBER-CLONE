@@ -15,6 +15,7 @@ import { UserDataContext } from '../context/UserContext';
 import { useNavigate } from 'react-router-dom';
 import LiveTracking from '../components/LiveTracking';
 import { Link } from 'react-router-dom';
+import { ThemeContext } from '../context/ThemeContext';
 
 
 const Home = () => {
@@ -24,7 +25,7 @@ const Home = () => {
     const [ panelOpen, setPanelOpen ] = useState(false)
     const [ suggestionsOpen, setSuggestionsOpen ] = useState(false)
     const [ menuOpen, setMenuOpen ] = useState(false)
-    const [ isDarkMode, setIsDarkMode ] = useState(false)
+    const { theme, toggleTheme } = useContext(ThemeContext)
 
     const vehiclePanelRef = useRef(null)
     const confirmRidePanelRef = useRef(null)
@@ -311,7 +312,18 @@ const Home = () => {
              {/* Header */}
             <div className={`fixed top-0 left-0 flex items-center justify-between w-full z-20 bg-transparent h-16 px-4 pointer-events-none transition-all duration-300 ${panelOpen ? 'opacity-0 pointer-events-none' : 'opacity-100'}`}>
                 <img className='w-12 h-12 object-contain ml-2 pointer-events-auto' src="https://upload.wikimedia.org/wikipedia/commons/c/cc/Uber_logo_2018.png" alt="Uber Logo" />
-                <div className='relative pointer-events-auto'>
+                <div className='relative pointer-events-auto flex items-center gap-2'>
+                    <button
+                        onClick={() => toggleTheme()}
+                        aria-label='Toggle theme'
+                        className='h-10 w-10 bg-slate-100 hover:bg-slate-200 flex items-center justify-center rounded-full transition-all duration-200 shadow-sm hover:shadow-md'
+                    >
+                        {theme === 'dark' ? (
+                          <i className="ri-sun-line text-slate-700"></i>
+                        ) : (
+                          <i className="ri-moon-line text-slate-700"></i>
+                        )}
+                    </button>
                     <button
                         onClick={() => setMenuOpen(!menuOpen)}
                         className='h-10 w-10 bg-slate-100 hover:bg-slate-200 flex items-center justify-center rounded-full transition-all duration-200 shadow-sm hover:shadow-md'

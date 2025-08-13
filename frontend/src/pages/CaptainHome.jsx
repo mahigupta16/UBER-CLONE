@@ -9,6 +9,7 @@ import { CaptainDataContext } from '../context/CaptainContext'
 import axios from 'axios'
 import LiveTracking from '../components/LiveTracking'
 import About from '../components/About'
+import { ThemeContext } from '../context/ThemeContext'
 
 const CaptainHome = () => {
 
@@ -29,6 +30,7 @@ const CaptainHome = () => {
 
     const { socket } = useContext(SocketContext)
     const { captain } = useContext(CaptainDataContext)
+    const { theme, toggleTheme } = useContext(ThemeContext)
 
     useEffect(() => {
         if (!captain?._id) {
@@ -135,14 +137,25 @@ const CaptainHome = () => {
             {/* Header */}
             <div className='fixed top-0 left-0 flex items-center justify-between w-full z-[3000] bg-transparent h-16 px-4 pointer-events-none'>
                 <img className='w-12 h-12 object-contain ml-2 pointer-events-auto' src="https://www.svgrepo.com/show/505031/uber-driver.svg" alt="Captain Icon" />
-                <div className='relative pointer-events-auto'>
-                    <button 
+                <div className='relative pointer-events-auto flex items-center gap-2'>
+                    <button
+                        onClick={() => toggleTheme()}
+                        aria-label='Toggle theme'
+                        className='h-10 w-10 bg-slate-100 hover:bg-slate-200 flex items-center justify-center rounded-full transition-all duration-200 shadow-sm hover:shadow-md'
+                    >
+                        {theme === 'dark' ? (
+                          <i className="ri-sun-line text-slate-700"></i>
+                        ) : (
+                          <i className="ri-moon-line text-slate-700"></i>
+                        )}
+                    </button>
+                    <button
                         onClick={() => setMenuOpen(!menuOpen)}
                         className='h-10 w-10 bg-slate-100 hover:bg-slate-200 flex items-center justify-center rounded-full transition-all duration-200 shadow-sm hover:shadow-md'
                     >
                         <i className="text-lg font-medium ri-menu-line text-slate-700"></i>
                     </button>
-                    
+
                     {menuOpen && (
                         <div className='absolute right-0 top-12 bg-white rounded-lg shadow-lg border border-slate-200 min-w-48 py-2 z-[3100]'>
                             <button 
